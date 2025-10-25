@@ -42,15 +42,19 @@ function calcularPossiveisPlacares() {
   if (possiveis.length < 3) possiveis.push(`${Math.max(0, centralA + 1)}x${centralB}`);
   if (possiveis.length < 3) possiveis.push(`${centralA}x${Math.max(0, centralB + 1)}`);
 
-  // --- Exibir no Textbox ---
-  const resultado = document.getElementById("resultado_texto");
-  resultado.textContent = 
-    "=== Média de Gols ===\n\n" +
-    `Time A - Marcados: ${mediaA_marcados.toFixed(2)} | Sofridos: ${defesaA.toFixed(2)}\n` +
-    `Time B - Marcados: ${mediaB_marcados.toFixed(2)} | Sofridos: ${defesaB.toFixed(2)}\n` +
-    `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)} (Over/Under)\n\n` +
-    "=== 3 Possíveis Resultados do Jogo ===\n" +
-    possiveis.join("\n");
+// --- Exibir no Textbox ---
+const resultado = document.getElementById("resultado_texto");
+resultado.textContent = 
+  "=== Média de Gols ===\n\n" +
+  "Time A\n" +
+  `Gols Marcados: ${mediaA_marcados.toFixed(2)}\n` +
+  `Gols Sofridos: ${defesaA.toFixed(2)}\n\n` +
+  "Time B\n" +
+  `Gols Marcados: ${mediaB_marcados.toFixed(2)}\n` +
+  `Gols Sofridos: ${defesaB.toFixed(2)}\n\n` +
+  `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)} (Over/Under)\n\n` +
+  "=== 3 Possíveis Resultados do Jogo ===\n" +
+  possiveis.join("\n");
 }
 
 // ====== Eventos ======
