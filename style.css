@@ -7,28 +7,28 @@
 
 /* ===== BODY ===== */
 body {
-  background-color: #f7f7f7; /* fundo cinza-claro */
+  background-color: #666666; /* fundo cinza-claro */
   color: #222;
   font-family: "Segoe UI", Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  padding: 30px 10px;
+  padding: 30px 30px;
 }
 
 /* ===== CONTAINER ===== */
 .container {
   background: #ffffff; /* branco puro pra destacar texto */
-  border-radius: 15px;
-  padding: 25px 20px;
-  width: 95%;
+  border-radius: 5px;
+  padding: 10px 10px;
+  width: 100%;
   max-width: 480px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 25px;
+  gap: 15px;
 }
 
 /* ===== TÍTULO PRINCIPAL ===== */
@@ -43,8 +43,8 @@ h1 {
 .box {
   background-color: #f9f9f9;
   border: 2px solid #0077cc; /* azul destaque */
-  border-radius: 10px;
-  padding: 20px;
+  border-radius: 5px;
+  padding: 10px;
   width: 100%;
   transition: 0.2s;
 }
@@ -56,7 +56,7 @@ h1 {
 .box h2 {
   text-align: center;
   color: #0077cc;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   font-weight: 600;
 }
 
@@ -75,7 +75,7 @@ label {
 input[type="number"],
 select {
   width: 100%;
-  padding: 10px;
+  padding: 5px;
   border-radius: 6px;
   border: 1px solid #bbb;
   background-color: #fff;
@@ -96,10 +96,10 @@ button {
   color: #fff;
   font-weight: 600;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 22px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.5s ease;
   text-align: center;
   margin-top: 10px;
 }
@@ -116,7 +116,7 @@ button:hover {
   border-radius: 8px;
   padding: 12px;
   color: #111;
-  font-size: 0.95em;
+  font-size: 0.99em;
   white-space: pre-wrap;
   text-align: center;
   margin-top: 15px;
