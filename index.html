@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutStat - Possíveis Resultados</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>⚽ FutStat - Possíveis Resultados</h1>
+
+    <!-- Caixa Time A -->
+    <div class="box">
+      <h2>Time A</h2>
+      <div class="linha">
+        <label>Gols Marcados:</label>
+        <input type="number" id="golsA_marcados" min="0" placeholder="0" />
+      </div>
+      <div class="linha">
+        <label>Gols Sofridos:</label>
+        <input type="number" id="golsA_sofridos" min="0" placeholder="0" />
+      </div>
+    </div>
+
+    <!-- Caixa Time B -->
+    <div class="box">
+      <h2>Time B</h2>
+      <div class="linha">
+        <label>Gols Marcados:</label>
+        <input type="number" id="golsB_marcados" min="0" placeholder="0" />
+      </div>
+      <div class="linha">
+        <label>Gols Sofridos:</label>
+        <input type="number" id="golsB_sofridos" min="0" placeholder="0" />
+      </div>
+    </div>
+
+    <!-- Caixa Resultado -->
+    <div class="box resultado-box">
+      <h2>Resultados</h2>
+
+      <div class="linha">
+        <label>Total de Jogos:</label>
+        <select id="total_jogos">
+          <option value="3">3</option>
+          <option value="5" selected>5</option>
+          <option value="10">10</option>
+        </select>
+      </div>
+
+      <button id="btn_calcular">Calcular Possíveis Gols</button>
+
+      <pre id="resultado_texto">Insira os dados e clique em Calcular.</pre>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
