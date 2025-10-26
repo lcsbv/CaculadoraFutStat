@@ -53,7 +53,7 @@ resultado.textContent =
   `Gols Marcados: ${mediaB_marcados.toFixed(2)}\n` +
   `Gols Sofridos: ${defesaB.toFixed(2)}\n\n` +
   `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)} (Over/Under)\n\n` +
-  "=== 3 Possíveis Resultados do Jogo ===\n" +
+  "= Possíveis Resultados =\n" +
   possiveis.join("\n");
 }
 
