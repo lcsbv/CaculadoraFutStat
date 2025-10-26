@@ -7,31 +7,29 @@
 
 /* ===== BODY ===== */
 body {
-  background-color: #666666; /* fundo cinza-claro */
+  background-color: #fff; /* fundo branco */
   color: #222;
   font-family: "Segoe UI", Arial, sans-serif;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   min-height: 100vh;
-  padding: 30px 30px;
+  padding: 10px;
 }
 
 /* ===== CONTAINER ===== */
 .container {
-  background: #ffffff; /* branco puro pra destacar texto */
-  border-radius: 5px;
-  padding: 10px 10px;
+  /* Removido fundo branco e sombra */
+  border-radius: 0; /* opcional, remove borda arredondada */
+  padding: 0; /* opcional, remove espaçamento interno */
   width: 100%;
-  max-width: 480px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  max-width: 500px; /* mantém limite de largura para o conteúdo não ficar gigante */
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 15px;
 }
 
-/* ===== TÍTULO PRINCIPAL ===== */
+/* ===== TÍTULO ===== */
 h1 {
   text-align: center;
   color: #0077cc;
@@ -39,18 +37,18 @@ h1 {
   font-weight: 600;
 }
 
-/* ===== CAIXAS (TIME A, TIME B, RESULTADOS) ===== */
+/* ===== BOX ===== */
 .box {
-  background-color: #f9f9f9;
-  border: 2px solid #0077cc; /* azul destaque */
-  border-radius: 5px;
+  background-color: transparent; /* removido fundo branco */
+  border: 2px solid #0077cc; /* opcional, você pode remover se quiser linhas também */
+  border-radius: 6px;
   padding: 10px;
   width: 100%;
   transition: 0.2s;
 }
 
 .box:hover {
-  box-shadow: 0 0 10px rgba(0, 119, 204, 0.2);
+  box-shadow: none; /* remove sombra ao passar o mouse */
 }
 
 .box h2 {
@@ -60,11 +58,17 @@ h1 {
   font-weight: 600;
 }
 
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 15px;
+}
+
 /* ===== LINHAS ===== */
 .linha {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
 }
 
 label {
@@ -96,7 +100,7 @@ button {
   color: #fff;
   font-weight: 600;
   border: none;
-  padding: 22px;
+  padding: 15px;
   border-radius: 10px;
   cursor: pointer;
   transition: 0.5s ease;
@@ -116,7 +120,7 @@ button:hover {
   border-radius: 8px;
   padding: 12px;
   color: #111;
-  font-size: 0.99em;
+  font-size: 0.95em;
   white-space: pre-wrap;
   text-align: center;
   margin-top: 15px;
@@ -124,30 +128,9 @@ button:hover {
   font-family: "Courier New", monospace;
 }
 
-/* ===== RESPONSIVO (ANDROID / iPHONE) ===== */
+/* ===== RESPONSIVO ===== */
 @media (max-width: 600px) {
-  body {
-    padding: 15px;
-  }
-
-  .container {
-    width: 100%;
-    gap: 20px;
-  }
-
-  h1 {
-    font-size: 1.4em;
-  }
-
-  .box {
-    padding: 15px;
-  }
-
-  button {
-    font-size: 1em;
-  }
-
-  pre {
-    font-size: 0.9em;
+  .grid {
+    grid-template-columns: 1fr;
   }
 }

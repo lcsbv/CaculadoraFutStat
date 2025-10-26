@@ -1,61 +1,89 @@
-// ====== Funções Utilitárias ======
 function lerValor(id) {
   const campo = document.getElementById(id);
-  const val = campo.value.trim();
+  const val = (campo && campo.value) ? campo.value.trim() : "";
   const num = parseInt(val, 10);
   if (isNaN(num) || num < 0) {
-    campo.style.borderColor = "red";
+    if (campo) campo.style.borderColor = "red";
     return 0;
   } else {
-    campo.style.borderColor = "#555";
+    if (campo) campo.style.borderColor = "#555";
     return num;
   }
 }
 
-// ====== Cálculo de Possíveis Placares ======
 function calcularPossiveisPlacares() {
   const totalJogos = parseInt(document.getElementById("total_jogos").value, 10) || 1;
 
   // --- Time A ---
   const golsA_marcados = lerValor("golsA_marcados");
   const golsA_sofridos = lerValor("golsA_sofridos");
-  const mediaA_marcados = golsA_marcados / totalJogos;
-  const defesaA = golsA_sofridos / totalJogos;
+  const vitoriasA = lerValor("vitoriasA");
+  const empatesA = lerValor("empatesA");
 
   // --- Time B ---
   const golsB_marcados = lerValor("golsB_marcados");
   const golsB_sofridos = lerValor("golsB_sofridos");
+  const vitoriasB = lerValor("vitoriasB");
+  const empatesB = lerValor("empatesB");
+
+  // Validação básica
+  if (vitoriasA + empatesA > totalJogos) {
+    alert("Time A: vitórias + empates > total de jogos. Corrija os valores.");
+    return;
+  }
+  if (vitoriasB + empatesB > totalJogos) {
+    alert("Time B: vitórias + empates > total de jogos. Corrija os valores.");
+    return;
+  }
+
+  // --- Médias de gols ---
+  const mediaA_marcados = golsA_marcados / totalJogos;
+  const defensaA = golsA_sofridos / totalJogos;
   const mediaB_marcados = golsB_marcados / totalJogos;
-  const defesaB = golsB_sofridos / totalJogos;
+  const defensaB = golsB_sofridos / totalJogos;
 
-  // --- Médias ajustadas por ataque/defesa adversária ---
-  const lambdaA = mediaA_marcados * (defesaB / Math.max(defesaB, 0.1));
-  const lambdaB = mediaB_marcados * (defesaA / Math.max(defesaA, 0.1));
+  // --- Probabilidades (Vitória e Empate apenas) ---
+  const probVitA = ((vitoriasA / totalJogos) * 100).toFixed(1);
+  const probEmpA = ((empatesA / totalJogos) * 100).toFixed(1);
+  const probVitB = ((vitoriasB / totalJogos) * 100).toFixed(1);
+  const probEmpB = ((empatesB / totalJogos) * 100).toFixed(1);
 
-  // Arredondar para gerar placar central
+  // --- Resultado provável ---
+  const lambdaA = mediaA_marcados * (1 - (defensaB / (mediaB_marcados + defensaB + 0.1)));
+  const lambdaB = mediaB_marcados * (1 - (defensaA / (mediaA_marcados + defensaA + 0.1)));
   const centralA = Math.max(0, Math.round(lambdaA));
   const centralB = Math.max(0, Math.round(lambdaB));
 
-  // Gerar 3 possíveis placares plausíveis
-  const possiveis = [];
-  possiveis.push(`${centralA}x${centralB}`);
-  if (possiveis.length < 3) possiveis.push(`${Math.max(0, centralA + 1)}x${centralB}`);
-  if (possiveis.length < 3) possiveis.push(`${centralA}x${Math.max(0, centralB + 1)}`);
+  const possiveis = [
+    `${centralA}x${centralB}`,
+    `${Math.max(0, centralA - 1)}x${centralB}`,
+    `${centralA}x${Math.max(0, centralB - 1)}`,
+    `${centralA + 1}x${centralB}`,
+    `${centralA}x${centralB + 1}`
+  ];
 
-// --- Exibir no Textbox ---
-const resultado = document.getElementById("resultado_texto");
-resultado.textContent = 
-  "=== Média de Gols ===\n\n" +
-  "Time A\n" +
-  `Gols Marcados: ${mediaA_marcados.toFixed(2)}\n` +
-  `Gols Sofridos: ${defesaA.toFixed(2)}\n\n` +
-  "Time B\n" +
-  `Gols Marcados: ${mediaB_marcados.toFixed(2)}\n` +
-  `Gols Sofridos: ${defesaB.toFixed(2)}\n\n` +
-  `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)} (Over/Under)\n\n` +
-  "= Possíveis Resultados =\n" +
-  possiveis.join("\n");
+  // --- Exibir ---
+  const resultado = document.getElementById("resultado_texto");
+  resultado.innerHTML =
+    "=== Probabilidades ===\n\n" +
+    `Time A → Vitória: ${probVitA}%\n` +
+    `Time A → Empate: ${probEmpA}%\n\n` +
+    `Time B → Vitória: ${probVitB}%\n` +
+    `Time B → Empate: ${probEmpB}%\n\n` +
+    "=== Média de Gols ===\n\n" +
+    `Time A → Marcados: ${mediaA_marcados.toFixed(2)}\n` +
+    `Time A → Sofridos: ${defensaA.toFixed(2)}\n\n` +
+    `Time B → Marcados: ${mediaB_marcados.toFixed(2)}\n` +
+    `Time B → Sofridos: ${defensaB.toFixed(2)}\n\n` +
+    `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)}\n\n` +
+    "= Possíveis Resultados =\n" +
+    possiveis.join("\n");
+
+  // --- Rolar automaticamente para o resultado ---
+  resultado.scrollIntoView({
+    behavior: "smooth", // rolagem suave
+    block: "center"     // centraliza o elemento na tela
+  });
 }
 
-// ====== Eventos ======
 document.getElementById("btn_calcular").addEventListener("click", calcularPossiveisPlacares);
