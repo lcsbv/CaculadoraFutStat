@@ -43,44 +43,53 @@ function calcularPossiveisPlacares() {
   const defensaB = golsB_sofridos / totalJogos;
 
   // --- Probabilidades ---
-  const probVitA = ((vitoriasA / totalJogos) * 100).toFixed(1);
-  const probEmpA = ((empatesA / totalJogos) * 100).toFixed(1);
-  const probVitB = ((vitoriasB / totalJogos) * 100).toFixed(1);
-  const probEmpB = ((empatesB / totalJogos) * 100).toFixed(1);
+  const probVitA = (vitoriasA / totalJogos) * 100;
+  const probEmpA = (empatesA / totalJogos) * 100;
+  const probVitB = (vitoriasB / totalJogos) * 100;
+  const probEmpB = (empatesB / totalJogos) * 100;
 
-  // --- Identificar máximos ---
   const maxVit = Math.max(probVitA, probVitB);
   const maxEmp = Math.max(probEmpA, probEmpB);
 
-  // --- Resultado provável ---
-  const lambdaA = mediaA_marcados * (1 - (defensaB / (mediaB_marcados + defensaB + 0.1)));
-  const lambdaB = mediaB_marcados * (1 - (defensaA / (mediaA_marcados + defensaA + 0.1)));
-  const centralA = Math.max(0, Math.round(lambdaA));
-  const centralB = Math.max(0, Math.round(lambdaB));
+  // --- Estimativa de gols ajustada ---
+  const lambdaA = Math.max(0, mediaA_marcados * (1 - defensaB / (mediaB_marcados + defensaB + 0.1)));
+  const lambdaB = Math.max(0, mediaB_marcados * (1 - defensaA / (mediaA_marcados + defensaA + 0.1)));
 
-  const possiveis = [
-    `${centralA}x${centralB}`,
-    `${Math.max(0, centralA - 1)}x${centralB}`,
-    `${centralA}x${Math.max(0, centralB - 1)}`,
-    `${centralA + 1}x${centralB}`,
-    `${centralA}x${centralB + 1}`
-  ];
+  // --- Geração de placares possíveis próximos da média ---
+  const candidatos = [];
+  for (let a = Math.floor(lambdaA) - 1; a <= Math.ceil(lambdaA) + 1; a++) {
+    for (let b = Math.floor(lambdaB) - 1; b <= Math.ceil(lambdaB) + 1; b++) {
+      if (a < 0 || b < 0) continue;
+      let resultadoProb; 
+      if (a > b) resultadoProb = probVitA / 100;
+      else if (a < b) resultadoProb = probVitB / 100;
+      else resultadoProb = probEmpA / 100; // empate
+      // Score = probabilidade x proximidade da média
+      const score = resultadoProb * Math.exp(-Math.abs(a - lambdaA) - Math.abs(b - lambdaB));
+      candidatos.push({ placar: `${a}x${b}`, score });
+    }
+  }
+
+  // --- Ordenar e pegar os 3 melhores ---
+  candidatos.sort((x, y) => y.score - x.score);
+  const top3 = candidatos.slice(0, 3).map(c => c.placar);
 
   // --- Exibir resultados ---
   const resultado = document.getElementById("resultado_texto");
   resultado.innerHTML = ""; // limpar conteúdo anterior
 
+  // Probabilidades com destaque
   function criarLinha(texto, tipo, valor) {
     const linha = document.createElement("div");
     linha.style.padding = "4px 8px";
     linha.style.borderRadius = "4px";
     linha.style.marginBottom = "2px";
 
-    if (tipo === "vitoria" && parseFloat(valor) === parseFloat(maxVit)) {
+    if (tipo === "vitoria" && valor === maxVit) {
       linha.style.backgroundColor = "lightgreen";
       linha.style.fontWeight = "600";
     }
-    if (tipo === "empate" && parseFloat(valor) === parseFloat(maxEmp)) {
+    if (tipo === "empate" && valor === maxEmp) {
       linha.style.backgroundColor = "orange";
       linha.style.fontWeight = "600";
     }
@@ -89,32 +98,29 @@ function calcularPossiveisPlacares() {
     resultado.appendChild(linha);
   }
 
-  // Probabilidades com destaque por linha
-  criarLinha(`Time A → Vitória: ${probVitA}%`, "vitoria", probVitA);
-  criarLinha(`Time A → Empate: ${probEmpA}%`, "empate", probEmpA);
-  criarLinha(`Time B → Vitória: ${probVitB}%`, "vitoria", probVitB);
-  criarLinha(`Time B → Empate: ${probEmpB}%`, "empate", probEmpB);
+  criarLinha(`Time A → Vitória: ${probVitA.toFixed(1)}%`, "vitoria", probVitA);
+  criarLinha(`Time A → Empate: ${probEmpA.toFixed(1)}%`, "empate", probEmpA);
+  criarLinha(`Time B → Vitória: ${probVitB.toFixed(1)}%`, "vitoria", probVitB);
+  criarLinha(`Time B → Empate: ${probEmpB.toFixed(1)}%`, "empate", probEmpB);
 
-  // --- Linha em branco para separar as médias ---
-  const separadorMedias = document.createElement("div");
-  separadorMedias.style.height = "10px";
-  separadorMedias.style.backgroundColor = "#ffffff";
-  resultado.appendChild(separadorMedias);
+  // Separador
+  const separador = document.createElement("div");
+  separador.style.height = "10px";
+  separador.style.backgroundColor = "#ffffff";
+  resultado.appendChild(separador);
 
-  // Médias e possíveis resultados (sem destaque)
+  // Médias e top 3 resultados
   const medias = document.createElement("div");
-  medias.style.textAlign = "center";
-  medias.innerHTML =
-    `Time A → Marcados: ${mediaA_marcados.toFixed(2)}<br>` +
-    `Time A → Sofridos: ${defensaA.toFixed(2)}<br>` +
-    `Time B → Marcados: ${mediaB_marcados.toFixed(2)}<br>` +
-    `Time B → Sofridos: ${defensaB.toFixed(2)}<br><br>` +
-    `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)}<br><br>` +
-    "== Possíveis Resultados ==<br>" +
-    possiveis.join("<br>");
+medias.style.textAlign = "center";
+medias.innerHTML =
+  `Time A → Marcados: ${mediaA_marcados.toFixed(2)}<br>` +
+  `Time A → Sofridos: ${defensaA.toFixed(2)}<br><br>` +
+  `Time B → Marcados: ${mediaB_marcados.toFixed(2)}<br>` +
+  `Time B → Sofridos: ${defensaB.toFixed(2)}<br><br>` +
+  `<b>Média total de gols da partida:</b> ${(lambdaA + lambdaB).toFixed(2)}<br><br>` +
+  "<b>Top 3 resultados prováveis:</b><br>" +
+  top3.join("<br>");
   resultado.appendChild(medias);
-
-  // Rolagem suave
   resultado.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
