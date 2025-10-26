@@ -42,11 +42,15 @@ function calcularPossiveisPlacares() {
   const mediaB_marcados = golsB_marcados / totalJogos;
   const defensaB = golsB_sofridos / totalJogos;
 
-  // --- Probabilidades (Vitória e Empate apenas) ---
+  // --- Probabilidades ---
   const probVitA = ((vitoriasA / totalJogos) * 100).toFixed(1);
   const probEmpA = ((empatesA / totalJogos) * 100).toFixed(1);
   const probVitB = ((vitoriasB / totalJogos) * 100).toFixed(1);
   const probEmpB = ((empatesB / totalJogos) * 100).toFixed(1);
+
+  // --- Identificar máximos ---
+  const maxVit = Math.max(probVitA, probVitB);
+  const maxEmp = Math.max(probEmpA, probEmpB);
 
   // --- Resultado provável ---
   const lambdaA = mediaA_marcados * (1 - (defensaB / (mediaB_marcados + defensaB + 0.1)));
@@ -62,28 +66,56 @@ function calcularPossiveisPlacares() {
     `${centralA}x${centralB + 1}`
   ];
 
-  // --- Exibir ---
+  // --- Exibir resultados ---
   const resultado = document.getElementById("resultado_texto");
-  resultado.innerHTML =
-    "=== Probabilidades ===\n\n" +
-    `Time A → Vitória: ${probVitA}%\n` +
-    `Time A → Empate: ${probEmpA}%\n\n` +
-    `Time B → Vitória: ${probVitB}%\n` +
-    `Time B → Empate: ${probEmpB}%\n\n` +
-    "=== Média de Gols ===\n\n" +
-    `Time A → Marcados: ${mediaA_marcados.toFixed(2)}\n` +
-    `Time A → Sofridos: ${defensaA.toFixed(2)}\n\n` +
-    `Time B → Marcados: ${mediaB_marcados.toFixed(2)}\n` +
-    `Time B → Sofridos: ${defensaB.toFixed(2)}\n\n` +
-    `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)}\n\n` +
-    "= Possíveis Resultados =\n" +
-    possiveis.join("\n");
+  resultado.innerHTML = ""; // limpar conteúdo anterior
 
-  // --- Rolar automaticamente para o resultado ---
-  resultado.scrollIntoView({
-    behavior: "smooth", // rolagem suave
-    block: "center"     // centraliza o elemento na tela
-  });
+  function criarLinha(texto, tipo, valor) {
+    const linha = document.createElement("div");
+    linha.style.padding = "4px 8px";
+    linha.style.borderRadius = "4px";
+    linha.style.marginBottom = "2px";
+
+    if (tipo === "vitoria" && parseFloat(valor) === parseFloat(maxVit)) {
+      linha.style.backgroundColor = "lightgreen";
+      linha.style.fontWeight = "600";
+    }
+    if (tipo === "empate" && parseFloat(valor) === parseFloat(maxEmp)) {
+      linha.style.backgroundColor = "orange";
+      linha.style.fontWeight = "600";
+    }
+
+    linha.innerHTML = texto;
+    resultado.appendChild(linha);
+  }
+
+  // Probabilidades com destaque por linha
+  criarLinha(`Time A → Vitória: ${probVitA}%`, "vitoria", probVitA);
+  criarLinha(`Time A → Empate: ${probEmpA}%`, "empate", probEmpA);
+  criarLinha(`Time B → Vitória: ${probVitB}%`, "vitoria", probVitB);
+  criarLinha(`Time B → Empate: ${probEmpB}%`, "empate", probEmpB);
+
+  // --- Linha em branco para separar as médias ---
+  const separadorMedias = document.createElement("div");
+  separadorMedias.style.height = "10px";
+  separadorMedias.style.backgroundColor = "#ffffff";
+  resultado.appendChild(separadorMedias);
+
+  // Médias e possíveis resultados (sem destaque)
+  const medias = document.createElement("div");
+  medias.style.textAlign = "center";
+  medias.innerHTML =
+    `Time A → Marcados: ${mediaA_marcados.toFixed(2)}<br>` +
+    `Time A → Sofridos: ${defensaA.toFixed(2)}<br>` +
+    `Time B → Marcados: ${mediaB_marcados.toFixed(2)}<br>` +
+    `Time B → Sofridos: ${defensaB.toFixed(2)}<br><br>` +
+    `Média total do jogo: ${(mediaA_marcados + mediaB_marcados).toFixed(2)}<br><br>` +
+    "== Possíveis Resultados ==<br>" +
+    possiveis.join("<br>");
+  resultado.appendChild(medias);
+
+  // Rolagem suave
+  resultado.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 document.getElementById("btn_calcular").addEventListener("click", calcularPossiveisPlacares);
