@@ -117,11 +117,12 @@ medias.innerHTML =
   `Time A → Sofridos: ${defensaA.toFixed(2)}<br><br>` +
   `Time B → Marcados: ${mediaB_marcados.toFixed(2)}<br>` +
   `Time B → Sofridos: ${defensaB.toFixed(2)}<br><br>` +
-  `<b>Média total de gols da partida:</b> ${(lambdaA + lambdaB).toFixed(2)}<br><br>` +
-  "<b>Top 3 resultados prováveis:</b><br>" +
+  `<b>Média total de gols:</b> ${(lambdaA + lambdaB).toFixed(2)}<br><br>` +
+  "<b>3 resultados prováveis:</b><br>" +
   top3.join("<br>");
   resultado.appendChild(medias);
   resultado.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 document.getElementById("btn_calcular").addEventListener("click", calcularPossiveisPlacares);
+
