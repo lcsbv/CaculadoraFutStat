@@ -54,6 +54,11 @@ function calcularPossiveisPlacares() {
   const mediaB_marcados = golsB_marcados / totalJogos;
   const defensaB = golsB_sofridos / totalJogos;
 
+  // --- Média total de gols (corrigida: ataque + defesa de ambos ÷ 2) ---
+  const mediaTotalGols = (
+    mediaA_marcados + defensaA + mediaB_marcados + defensaB
+  ) / 2;
+
   // --- Lambda para placares ---
   const lambdaA = Math.max(0, mediaA_marcados * (1 - defensaB / (mediaB_marcados + defensaB + 0.1)));
   const lambdaB = Math.max(0, mediaB_marcados * (1 - defensaA / (mediaA_marcados + defensaA + 0.1)));
@@ -82,13 +87,11 @@ function calcularPossiveisPlacares() {
     linha.style.marginBottom = "4px";
     linha.style.borderRadius = "5px";
     linha.style.fontWeight = "600";
-    linha.style.color = "black"; // texto permanece preto
+    linha.style.color = "black";
 
-    // Fundo
     if (tipo === "vitoria") linha.style.backgroundColor = "lightgreen";
     if (tipo === "empate") linha.style.backgroundColor = "orange";
 
-    // Emoji se for maior valor
     const emoji = valor === maxVal ? " 🏆" : "";
     linha.textContent = `${texto}: ${valor.toFixed(1)}%${emoji}`;
 
@@ -99,16 +102,14 @@ function calcularPossiveisPlacares() {
   criarLinha("Empate", "empate", probEmp);
   criarLinha("Time B → Vitória", "vitoria", probVitB);
 
-  // --- Separador ---
   const separador = document.createElement("div");
   separador.style.height = "10px";
   resultado.appendChild(separador);
 
-  // --- Médias e tendência ---
   const medias = document.createElement("div");
   medias.style.textAlign = "center";
 
-  const mediaTotalGols = mediaA_marcados + mediaB_marcados;
+  // --- Tendência do mercado ---
   let tendenciaMercado = "";
   let corTendencia = "";
   if (mediaTotalGols < 1.5) {
@@ -130,7 +131,7 @@ function calcularPossiveisPlacares() {
     `Time A → Sofridos: ${defensaA.toFixed(2)}<br><br>` +
     `Time B → Marcados: ${mediaB_marcados.toFixed(2)}<br>` +
     `Time B → Sofridos: ${defensaB.toFixed(2)}<br><br>` +
-    `<b>Média total de gols da partida:</b> ${mediaTotalGols.toFixed(2)}<br>` +
+    `<b>Média total de gols (ajustada):</b> ${mediaTotalGols.toFixed(2)}<br>` +
     `<span style="color:${corTendencia}; font-weight:600;">${tendenciaMercado}</span><br><br>` +
     `<b>Top 3 resultados prováveis:</b><br>` +
     top3.join("<br>");
@@ -139,4 +140,17 @@ function calcularPossiveisPlacares() {
   resultado.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
+// --- Ações de clique ---
 document.getElementById("btn_calcular").addEventListener("click", calcularPossiveisPlacares);
+
+// --- Download do resultado como imagem ---
+document.getElementById("btn_download").addEventListener("click", () => {
+  const resultado = document.getElementById("resultado_texto");
+  html2canvas(resultado, { backgroundColor: "#fff" }).then(canvas => {
+    const link = document.createElement("a");
+    const data = new Date().toISOString().split("T")[0];
+    link.download = `resultado_${data}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+});
