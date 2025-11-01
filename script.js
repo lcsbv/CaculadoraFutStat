@@ -54,22 +54,33 @@ function calcularPossiveisPlacares() {
   const mediaB_marcados = golsB_marcados / totalJogos;
   const defensaB = golsB_sofridos / totalJogos;
 
-  // --- Média total de gols (corrigida: ataque + defesa de ambos ÷ 2) ---
+  // --- Média total de gols ---
   const mediaTotalGols = (
     mediaA_marcados + defensaA + mediaB_marcados + defensaB
   ) / 2;
 
-  // --- Lambda para placares ---
-  const lambdaA = Math.max(0, mediaA_marcados * (1 - defensaB / (mediaB_marcados + defensaB + 0.1)));
-  const lambdaB = Math.max(0, mediaB_marcados * (1 - defensaA / (mediaA_marcados + defensaA + 0.1)));
+  const resultado = document.getElementById("resultado_texto");
+  resultado.innerHTML = "";
 
-  // --- Geração de placares ---
+  // --- Interrompe se não há base estatística ---
+  if ((mediaA_marcados === 0 && mediaB_marcados === 0) ||
+      (isNaN(mediaA_marcados) || isNaN(mediaB_marcados))) {
+    resultado.innerHTML = "<b>⚠️ Dados insuficientes para estimar placares prováveis.</b>";
+    return;
+  }
+
+  // --- Geração de placares com base nas médias ---
   const candidatos = [];
-  for (let a = Math.floor(lambdaA) - 1; a <= Math.ceil(lambdaA) + 1; a++) {
-    for (let b = Math.floor(lambdaB) - 1; b <= Math.ceil(lambdaB) + 1; b++) {
-      if (a < 0 || b < 0) continue;
-      let resultadoProb = a > b ? probVitA / 100 : a < b ? probVitB / 100 : probEmp / 100;
-      const score = resultadoProb * Math.exp(-Math.abs(a - lambdaA) - Math.abs(b - lambdaB));
+  const maxGols = Math.max(Math.ceil(mediaA_marcados), Math.ceil(mediaB_marcados)) + 2;
+
+  for (let a = 0; a <= maxGols; a++) {
+    for (let b = 0; b <= maxGols; b++) {
+      const distancia = Math.abs(a - mediaA_marcados) + Math.abs(b - mediaB_marcados);
+      const score = Math.exp(-distancia) * (
+        a > b ? probVitA / 100 :
+        a < b ? probVitB / 100 :
+        probEmp / 100
+      );
       candidatos.push({ placar: `${a}x${b}`, score });
     }
   }
@@ -78,9 +89,6 @@ function calcularPossiveisPlacares() {
   const top3 = candidatos.slice(0, 3).map(c => c.placar);
 
   // --- Exibição ---
-  const resultado = document.getElementById("resultado_texto");
-  resultado.innerHTML = "";
-
   function criarLinha(texto, tipo, valor) {
     const linha = document.createElement("div");
     linha.style.padding = "6px 10px";
@@ -94,7 +102,6 @@ function calcularPossiveisPlacares() {
 
     const emoji = valor === maxVal ? " 🏆" : "";
     linha.textContent = `${texto}: ${valor.toFixed(1)}%${emoji}`;
-
     resultado.appendChild(linha);
   }
 
