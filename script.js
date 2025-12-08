@@ -1,50 +1,69 @@
-function calcular() {
-    const a_gm = Number(document.getElementById("a_gm").value);
-    const a_gs = Number(document.getElementById("a_gs").value);
-    const a_j = Number(document.getElementById("a_jogos").value);
+function ler(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) || v < 0 ? 0 : v;
+}
 
-    const b_gm = Number(document.getElementById("b_gm").value);
-    const b_gs = Number(document.getElementById("b_gs").value);
-    const b_j = Number(document.getElementById("b_jogos").value);
+document.getElementById("btn_calcular").addEventListener("click", () => {
+  const jogosA = ler("jogosA");
+  const jogosB = ler("jogosB");
+  const gmA = ler("golsA_marcados");
+  const gsA = ler("golsA_sofridos");
+  const gmB = ler("golsB_marcados");
+  const gsB = ler("golsB_sofridos");
 
-    if (a_j === 0 || b_j === 0) {
-        alert("Os jogos não podem ser zero!");
-        return;
+  const res = document.getElementById("resultado_texto");
+
+  if (jogosA === 0 || jogosB === 0) {
+    res.textContent = "⚠️ Preencha o total de jogos para ambos os times.";
+    return;
+  }
+
+  const mediaA_marcados = gmA / jogosA;
+  const mediaA_sofridos = gsA / jogosA;
+
+  const mediaB_marcados = gmB / jogosB;
+  const mediaB_sofridos = gsB / jogosB;
+
+  // Criação de placares prováveis
+  const candidatos = [];
+  const maxGols = 5;
+
+  for (let a = 0; a <= maxGols; a++) {
+    for (let b = 0; b <= maxGols; b++) {
+      const score =
+        Math.exp(-Math.abs(a - mediaA_marcados)) *
+        Math.exp(-Math.abs(b - mediaB_marcados));
+      candidatos.push({ placar: `${a}x${b}`, score });
     }
+  }
 
-    const mediaA_marcados = (a_gm / a_j).toFixed(2);
-    const mediaA_sofridos = (a_gs / a_j).toFixed(2);
+  candidatos.sort((a, b) => b.score - a.score);
 
-    const mediaB_marcados = (b_gm / b_j).toFixed(2);
-    const mediaB_sofridos = (b_gs / b_j).toFixed(2);
+  const top3 = candidatos.slice(0, 3).map(p => p.placar);
 
-    const texto = 
-`📊 MÉDIA DE GOLS
+  res.innerHTML =
+    `📊 <b>Médias do Time A</b>\n` +
+    `Marcados: ${mediaA_marcados.toFixed(2)}\n` +
+    `Sofridos: ${mediaA_sofridos.toFixed(2)}\n\n` +
 
-🔵 TIME A
-• Média de gols marcados: ${mediaA_marcados}
-• Média de gols sofridos: ${mediaA_sofridos}
+    `📊 <b>Médias do Time B</b>\n` +
+    `Marcados: ${mediaB_marcados.toFixed(2)}\n` +
+    `Sofridos: ${mediaB_sofridos.toFixed(2)}\n\n` +
 
-🔴 TIME B
-• Média de gols marcados: ${mediaB_marcados}
-• Média de gols sofridos: ${mediaB_sofridos}
-`;
+    `🔥 <b>Top 3 placares prováveis:</b>\n` +
+    top3.join("\n");
 
-    document.getElementById("resultado").textContent = texto;
+  // Mostrar botão de download
+  document.getElementById("btn_download").style.display = "block";
+});
 
-    document.getElementById("downloadBtn").style.display = "block";
-}
+document.getElementById("btn_download").addEventListener("click", () => {
+  const area = document.getElementById("resultado_texto");
 
-function baixarResultado() {
-    const texto = document.getElementById("resultado").textContent;
-
-    const blob = new Blob([texto], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "resultado_medias.txt";
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
+  html2canvas(area, { backgroundColor: "#fff" }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "resultado.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+});
