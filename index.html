@@ -1,83 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FutStat - Probabilidades e Médias</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Média de Gols</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <h1>FutStat</h1>
 
-    <!-- Caixa Time A -->
+<div class="container">
+
+    <h1>Calculadora de Média de Gols</h1>
+
     <div class="box">
-      <h2>Time A</h2>
-      <div class="grid">
-        <div class="linha">
-          <label>Gols Marcados:</label>
-          <input type="number" id="golsA_marcados" min="0" placeholder="0" />
+        <h2>Time A</h2>
+        <div class="grid">
+            <div class="linha">
+                <label>Gols Marcados</label>
+                <input id="a_gm" type="number">
+            </div>
+
+            <div class="linha">
+                <label>Gols Sofridos</label>
+                <input id="a_gs" type="number">
+            </div>
+
+            <div class="linha">
+                <label>Total de Jogos</label>
+                <input id="a_jogos" type="number">
+            </div>
         </div>
-        <div class="linha">
-          <label>Gols Sofridos:</label>
-          <input type="number" id="golsA_sofridos" min="0" placeholder="0" />
-        </div>
-        <div class="linha">
-          <label>Vitórias:</label>
-          <input type="number" id="vitoriasA" min="0" placeholder="0" />
-        </div>
-        <div class="linha">
-          <label>Empates:</label>
-          <input type="number" id="empatesA" min="0" placeholder="0" />
-        </div>
-      </div>
     </div>
 
-    <!-- Caixa Time B -->
     <div class="box">
-      <h2>Time B</h2>
-      <div class="grid">
-        <div class="linha">
-          <label>Gols Marcados:</label>
-          <input type="number" id="golsB_marcados" min="0" placeholder="0" />
+        <h2>Time B</h2>
+        <div class="grid">
+            <div class="linha">
+                <label>Gols Marcados</label>
+                <input id="b_gm" type="number">
+            </div>
+
+            <div class="linha">
+                <label>Gols Sofridos</label>
+                <input id="b_gs" type="number">
+            </div>
+
+            <div class="linha">
+                <label>Total de Jogos</label>
+                <input id="b_jogos" type="number">
+            </div>
         </div>
-        <div class="linha">
-          <label>Gols Sofridos:</label>
-          <input type="number" id="golsB_sofridos" min="0" placeholder="0" />
-        </div>
-        <div class="linha">
-          <label>Vitórias:</label>
-          <input type="number" id="vitoriasB" min="0" placeholder="0" />
-        </div>
-        <div class="linha">
-          <label>Empates:</label>
-          <input type="number" id="empatesB" min="0" placeholder="0" />
-        </div>
-      </div>
     </div>
 
-    <!-- Caixa Resultado -->
-    <div class="box resultado-box">
-      <h2>Resultados</h2>
+    <button onclick="calcular()">Calcular Médias</button>
 
-      <div class="linha">
-        <label>Total de Jogos:</label>
-        <select id="total_jogos">
-          <option value="3">3</option>
-          <option value="5" selected>5</option>
-          <option value="10">10</option>
-        </select>
-      </div>
-
-      <button id="btn_calcular">CALCULAR</button>
-
-      <pre id="resultado_texto">Insira os dados e clique em Calcular.</pre>
-      <button id="btn_download">BAIXAR RESULTADO</button>
+    <div class="resultado-box">
+        <pre id="resultado"></pre>
     </div>
-  </div>
 
-  <!-- Biblioteca html2canvas -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <script src="script.js"></script>
+    <button id="downloadBtn" style="display:none;" onclick="baixarResultado()">
+        Baixar Resultado
+    </button>
+
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

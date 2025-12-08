@@ -1,71 +1,48 @@
-/* ===== RESET ===== */
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
-/* ===== BODY ===== */
 body {
-  background-color: #fff; /* fundo branco */
-  color: #222;
+  background: #fff;
   font-family: "Segoe UI", Arial, sans-serif;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  padding: 10px;
+  padding: 20px;
 }
 
-/* ===== CONTAINER ===== */
 .container {
-  /* Removido fundo branco e sombra */
-  border-radius: 0; /* opcional, remove borda arredondada */
-  padding: 0; /* opcional, remove espaçamento interno */
   width: 100%;
-  max-width: 500px; /* mantém limite de largura para o conteúdo não ficar gigante */
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 20px;
 }
 
-/* ===== TÍTULO ===== */
 h1 {
   text-align: center;
   color: #0077cc;
-  margin-bottom: 10px;
-  font-weight: 600;
 }
 
-/* ===== BOX ===== */
 .box {
-  background-color: transparent; /* removido fundo branco */
-  border: 2px solid #0077cc; /* opcional, você pode remover se quiser linhas também */
+  border: 2px solid #0077cc;
   border-radius: 6px;
   padding: 10px;
-  width: 100%;
-  transition: 0.2s;
-}
-
-.box:hover {
-  box-shadow: none; /* remove sombra ao passar o mouse */
 }
 
 .box h2 {
-  text-align: center;
   color: #0077cc;
+  text-align: center;
   margin-bottom: 10px;
-  font-weight: 600;
 }
 
-/* ===== GRID ===== */
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px 15px;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
-/* ===== LINHAS ===== */
 .linha {
   display: flex;
   flex-direction: column;
@@ -73,62 +50,39 @@ h1 {
 
 label {
   margin-bottom: 5px;
-  font-weight: 500;
 }
 
-input[type="number"],
-select {
-  width: 100%;
-  padding: 5px;
-  border-radius: 6px;
-  border: 1px solid #bbb;
-  background-color: #fff;
-  color: #222;
+input[type="number"] {
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   text-align: center;
-  font-size: 1em;
 }
 
-input[type="number"]:focus,
-select:focus {
-  outline: 2px solid #0077cc;
-}
-
-/* ===== BOTÃO ===== */
 button {
-  width: 100%;
-  background-color: #0077cc;
+  padding: 14px;
+  background: #0077cc;
   color: #fff;
-  font-weight: 600;
   border: none;
-  padding: 15px;
   border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.5s ease;
-  text-align: center;
-  margin-top: 10px;
+  transition: 0.2s;
 }
 
 button:hover {
-  background-color: #0099ff;
-  transform: scale(1.02);
+  background: #0099ff;
 }
 
-/* ===== RESULTADOS ===== */
 .resultado-box pre {
-  background-color: #ffffff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  margin-top: 10px;
   padding: 12px;
-  color: #111;
-  font-size: 0.95em;
-  white-space: pre-wrap;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 6px;
   text-align: center;
-  margin-top: 15px;
-  line-height: 1.4;
-  font-family: "Courier New", monospace;
 }
 
-/* ===== RESPONSIVO ===== */
 @media (max-width: 600px) {
   .grid {
     grid-template-columns: 1fr;
