@@ -76,3 +76,19 @@ button {
 canvas {
   margin-top: 10px;
 }
+
+/* LEGENDA */
+#legendaConteudo {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.legenda-item {
+  margin-bottom: 10px;
+}
+
+.legenda-item strong {
+  display: block;
+  color: #0077cc;
+  margin-bottom: 2px;
+}

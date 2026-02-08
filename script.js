@@ -8,7 +8,6 @@ const boxTimeA = document.getElementById("box_time_a");
 const boxTimeB = document.getElementById("box_time_b");
 const boxHT = document.getElementById("box_ht");
 
-// estado inicial
 boxHT.style.display = "none";
 
 btnPre.onclick = () => trocarModo("PRE");
@@ -20,15 +19,11 @@ function trocarModo(modo) {
   btnPre.classList.toggle("ativo", modo === "PRE");
   btnHT.classList.toggle("ativo", modo === "HT");
 
-  if (modo === "PRE") {
-    boxTimeA.style.display = "block";
-    boxTimeB.style.display = "block";
-    boxHT.style.display = "none";
-  } else {
-    boxTimeA.style.display = "none";
-    boxTimeB.style.display = "none";
-    boxHT.style.display = "block";
-  }
+  boxTimeA.style.display = modo === "PRE" ? "block" : "none";
+  boxTimeB.style.display = modo === "PRE" ? "block" : "none";
+  boxHT.style.display = modo === "HT" ? "block" : "none";
+
+  atualizarLegenda([]);
 }
 
 document.getElementById("btn_calcular").onclick = () => {
@@ -43,7 +38,75 @@ function normalizar(v, min, max) {
   return Math.max(0, Math.min(100, ((v - min) / (max - min)) * 100));
 }
 
-/* ================= PRÉ-JOGO ================= */
+/* ========= LEGENDA ========= */
+
+const legendaTexto = {
+  PRE: {
+    Ataque: [
+      "📈 Ataque forte → cria muitas chances e pressiona",
+      "📉 Ataque fraco → dificuldade para criar e finalizar"
+    ],
+    Defesa: [
+      "📈 Defesa forte → sofre poucas chances e gols",
+      "📉 Defesa fraca → qualquer pressão vira perigo"
+    ],
+    Forma: [
+      "📈 Forma alta → bom momento e confiança",
+      "📉 Forma baixa → instabilidade e pressão"
+    ],
+    Eficiência: [
+      "📈 Eficiência alta → cria pouco, mas machuca quando cria",
+      "📉 Eficiência baixa → ataca, mas desperdiça muito"
+    ],
+    Consistência: [
+      "📈 Consistência alta → mantém padrão de jogo",
+      "📉 Consistência baixa → oscila muito"
+    ]
+  },
+
+  HT: {
+    Domínio: [
+      "📈 Domínio alto → controla o jogo",
+      "📉 Domínio baixo → sofre imposição"
+    ],
+    Pressão: [
+      "📈 Pressão alta → força erros e escanteios",
+      "📉 Pressão baixa → pouco volume ofensivo"
+    ],
+    Perigo: [
+      "📈 Perigo alto → cria chances reais de gol",
+      "📉 Perigo baixo → pouco ameaça"
+    ],
+    Eficiência: [
+      "📈 Eficiência alta → converte chances em gol",
+      "📉 Eficiência baixa → finaliza sem precisão"
+    ],
+    Intensidade: [
+      "📈 Intensidade alta → jogo acelerado",
+      "📉 Intensidade baixa → ritmo lento"
+    ]
+  }
+};
+
+function atualizarLegenda(labels) {
+  const container = document.getElementById("legendaConteudo");
+  container.innerHTML = "";
+
+  labels.forEach(label => {
+    const div = document.createElement("div");
+    div.className = "legenda-item";
+
+    div.innerHTML = `
+      <strong>${label}</strong>
+      ${legendaTexto[modoAtual][label][0]}<br>
+      ${legendaTexto[modoAtual][label][1]}
+    `;
+
+    container.appendChild(div);
+  });
+}
+
+/* ========= PRÉ-JOGO ========= */
 
 function calcularPreJogo() {
   const A = {
@@ -62,14 +125,12 @@ function calcularPreJogo() {
     consistencia: normalizar(1 - ler("gsB") / (ler("gmB") + 1), 0, 1)
   };
 
-  criarRadar(
-    ["Ataque", "Defesa", "Forma", "Eficiência", "Consistência"],
-    Object.values(A),
-    Object.values(B)
-  );
+  const labels = ["Ataque", "Defesa", "Forma", "Eficiência", "Consistência"];
+
+  criarRadar(labels, Object.values(A), Object.values(B));
 }
 
-/* ================= HT ================= */
+/* ========= HT ========= */
 
 function calcularHT() {
   const A = {
@@ -77,11 +138,7 @@ function calcularHT() {
     pressao: normalizar(ler("finalA") + ler("escA") * 2, 0, 20),
     perigo: normalizar(ler("finalA") * 0.7 + ler("golsA_ht") * 5, 0, 15),
     eficiencia: normalizar(ler("golsA_ht") / (ler("finalA") + 1), 0, 0.6),
-    intensidade: normalizar(
-      ler("finalA") + ler("escA") + ler("cartA") * 1.5,
-      0,
-      25
-    )
+    intensidade: normalizar(ler("finalA") + ler("escA") + ler("cartA") * 1.5, 0, 25)
   };
 
   const B = {
@@ -89,21 +146,15 @@ function calcularHT() {
     pressao: normalizar(ler("finalB") + ler("escB") * 2, 0, 20),
     perigo: normalizar(ler("finalB") * 0.7 + ler("golsB_ht") * 5, 0, 15),
     eficiencia: normalizar(ler("golsB_ht") / (ler("finalB") + 1), 0, 0.6),
-    intensidade: normalizar(
-      ler("finalB") + ler("escB") + ler("cartB") * 1.5,
-      0,
-      25
-    )
+    intensidade: normalizar(ler("finalB") + ler("escB") + ler("cartB") * 1.5, 0, 25)
   };
 
-  criarRadar(
-    ["Domínio", "Pressão", "Perigo", "Eficiência", "Intensidade"],
-    Object.values(A),
-    Object.values(B)
-  );
+  const labels = ["Domínio", "Pressão", "Perigo", "Eficiência", "Intensidade"];
+
+  criarRadar(labels, Object.values(A), Object.values(B));
 }
 
-/* ================= GRÁFICO ================= */
+/* ========= RADAR ========= */
 
 function criarRadar(labels, dadosA, dadosB) {
   const ctx = document.getElementById("radar");
@@ -141,4 +192,6 @@ function criarRadar(labels, dadosA, dadosB) {
       }
     }
   });
+
+  atualizarLegenda(labels);
 }
