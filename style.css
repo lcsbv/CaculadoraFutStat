@@ -11,8 +11,8 @@ body {
 }
 
 .container {
-  width: 100%;
   max-width: 420px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -27,13 +27,8 @@ h1 {
   background: #fff;
   border: 2px solid #0077cc;
   border-radius: 8px;
-  padding: 10px;
-}
-
-.box h2 {
+  padding: 12px;
   text-align: center;
-  margin-bottom: 6px;
-  color: #0077cc;
 }
 
 input {
@@ -58,6 +53,11 @@ button {
   color: #fff;
 }
 
+#btn_download {
+  background: #28a745;
+  color: #fff;
+}
+
 .modo-box {
   display: flex;
   gap: 10px;
@@ -73,22 +73,20 @@ button {
   color: #fff;
 }
 
-canvas {
-  margin-top: 10px;
-}
-
-/* LEGENDA */
-#legendaConteudo {
-  font-size: 14px;
-  line-height: 1.4;
+.divisor {
+  margin: 14px 0;
+  border: none;
+  border-top: 2px solid #0077cc;
 }
 
 .legenda-item {
+  font-size: 14px;
   margin-bottom: 10px;
 }
 
-.legenda-item strong {
-  display: block;
-  color: #0077cc;
-  margin-bottom: 2px;
+#rodapeImagem {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #009719;
 }

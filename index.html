@@ -7,23 +7,23 @@
 
   <link rel="stylesheet" href="style.css">
 
-  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
 <div class="container">
+
   <h1>FutStat</h1>
 
-  <!-- MODOS -->
   <div class="modo-box">
     <button id="btn_pre" class="ativo">PRÉ-JOGO</button>
     <button id="btn_ht">HT</button>
   </div>
 
-  <!-- PRÉ-JOGO -->
+  <!-- FORMULÁRIOS -->
   <div class="box" id="box_time_a">
-    <h2>Time A — Pré-Jogo</h2>
+    <input id="nomeA" value="Time A">
     <input id="jogosA" placeholder="Jogos analisados" type="number">
     <input id="gmA" placeholder="Gols marcados" type="number">
     <input id="gsA" placeholder="Gols sofridos" type="number">
@@ -31,44 +31,43 @@
   </div>
 
   <div class="box" id="box_time_b">
-    <h2>Time B — Pré-Jogo</h2>
+    <input id="nomeB" value="Time B">
     <input id="jogosB" placeholder="Jogos analisados" type="number">
     <input id="gmB" placeholder="Gols marcados" type="number">
     <input id="gsB" placeholder="Gols sofridos" type="number">
     <input id="pontosB" placeholder="Pontos recentes" type="number">
   </div>
 
-  <!-- HT -->
   <div class="box" id="box_ht">
-    <h2>1º Tempo (HT)</h2>
-
     <input id="golsA_ht" placeholder="Gols A (HT)" type="number">
     <input id="golsB_ht" placeholder="Gols B (HT)" type="number">
-
     <input id="finalA" placeholder="Finalizações A" type="number">
     <input id="finalB" placeholder="Finalizações B" type="number">
-
     <input id="posseA" placeholder="Posse A (%)" type="number">
     <input id="posseB" placeholder="Posse B (%)" type="number">
-
     <input id="escA" placeholder="Escanteios A" type="number">
     <input id="escB" placeholder="Escanteios B" type="number">
-
     <input id="cartA" placeholder="Cartões A" type="number">
     <input id="cartB" placeholder="Cartões B" type="number">
   </div>
 
+  <input id="descricaoImagem" placeholder="Ex: Pré-Jogo • Últimos 5 jogos">
+
   <button id="btn_calcular">CALCULAR</button>
+  <button id="btn_download">BAIXAR IMAGEM</button>
 
-  <!-- GRAFICO -->
-  <div class="box">
+  <!-- 🔥 ÁREA EXPORTADA (BOX ÚNICO) -->
+  <div id="areaResultado" class="box">
+
     <canvas id="radar"></canvas>
-  </div>
 
-  <!-- LEGENDA -->
-  <div class="box" id="legenda">
+    <hr class="divisor">
+
     <h2>Leitura do Radar</h2>
     <div id="legendaConteudo"></div>
+
+    <div id="rodapeImagem"></div>
+
   </div>
 
 </div>
