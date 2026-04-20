@@ -2,8 +2,13 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>FutStat Radar</title>
+  <title>FutStat Radar — Análise pré-jogo e intervalo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Compare times com radar de probabilidade e leitura automática dos eixos — pré-jogo ou intervalo (HT).">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 
@@ -14,62 +19,163 @@
 
 <div class="container">
 
-  <h1>FutStat</h1>
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <div class="brand-text">
+        <h1>FutStat Radar</h1>
+        <p class="tagline">Probabilidade e leitura tática em um único painel</p>
+      </div>
+    </div>
+  </header>
 
-  <div class="modo-box">
-    <button id="btn_pre" class="ativo">PRÉ-JOGO</button>
-    <button id="btn_ht">HT</button>
+  <div class="modo-box" role="tablist" aria-label="Modo de análise">
+    <button type="button" id="btn_pre" class="ativo" role="tab" aria-selected="true">Pré-jogo</button>
+    <button type="button" id="btn_ht" role="tab" aria-selected="false">Intervalo (HT)</button>
   </div>
 
-  <!-- FORMULÁRIOS -->
-  <div class="box" id="box_time_a">
-    <input id="nomeA" value="Time A">
-    <input id="jogosA" placeholder="Jogos analisados" type="number">
-    <input id="gmA" placeholder="Gols marcados" type="number">
-    <input id="gsA" placeholder="Gols sofridos" type="number">
-    <input id="pontosA" placeholder="Pontos recentes" type="number">
-  </div>
+  <main class="app-main">
 
-  <div class="box" id="box_time_b">
-    <input id="nomeB" value="Time B">
-    <input id="jogosB" placeholder="Jogos analisados" type="number">
-    <input id="gmB" placeholder="Gols marcados" type="number">
-    <input id="gsB" placeholder="Gols sofridos" type="number">
-    <input id="pontosB" placeholder="Pontos recentes" type="number">
-  </div>
+    <section class="panel" aria-labelledby="titulo-dados">
+      <h2 id="titulo-dados" class="panel-title">Dados de entrada</h2>
+      <p class="panel-hint">Preencha os campos do período selecionado e calcule o radar para comparar os times.</p>
 
-  <div class="box" id="box_ht">
-    <input id="golsA_ht" placeholder="Gols A (HT)" type="number">
-    <input id="golsB_ht" placeholder="Gols B (HT)" type="number">
-    <input id="finalA" placeholder="Finalizações A" type="number">
-    <input id="finalB" placeholder="Finalizações B" type="number">
-    <input id="posseA" placeholder="Posse A (%)" type="number">
-    <input id="posseB" placeholder="Posse B (%)" type="number">
-    <input id="escA" placeholder="Escanteios A" type="number">
-    <input id="escB" placeholder="Escanteios B" type="number">
-    <input id="cartA" placeholder="Cartões A" type="number">
-    <input id="cartB" placeholder="Cartões B" type="number">
-  </div>
+      <div class="teams-grid">
+        <div class="box card card--team-a" id="box_time_a">
+          <h3 class="card-title">Time A</h3>
+          <label class="field">
+            <span class="field-label">Nome</span>
+            <input id="nomeA" type="text" value="Time A" autocomplete="off">
+          </label>
+          <label class="field">
+            <span class="field-label">Jogos analisados</span>
+            <input id="jogosA" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Gols marcados</span>
+            <input id="gmA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Gols sofridos</span>
+            <input id="gsA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Pontos recentes</span>
+            <input id="pontosA" placeholder="Ex.: soma dos últimos jogos" type="number" inputmode="numeric">
+          </label>
+        </div>
 
-  <input id="descricaoImagem" placeholder="Ex: Pré-Jogo • Últimos 5 jogos">
+        <div class="box card card--team-b" id="box_time_b">
+          <h3 class="card-title">Time B</h3>
+          <label class="field">
+            <span class="field-label">Nome</span>
+            <input id="nomeB" type="text" value="Time B" autocomplete="off">
+          </label>
+          <label class="field">
+            <span class="field-label">Jogos analisados</span>
+            <input id="jogosB" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Gols marcados</span>
+            <input id="gmB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Gols sofridos</span>
+            <input id="gsB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Pontos recentes</span>
+            <input id="pontosB" placeholder="Ex.: soma dos últimos jogos" type="number" inputmode="numeric">
+          </label>
+        </div>
+      </div>
 
-  <button id="btn_calcular">CALCULAR</button>
-  <button id="btn_download">BAIXAR IMAGEM</button>
+      <div class="box card card--ht" id="box_ht">
+        <h3 class="card-title">Estatísticas do intervalo</h3>
+        <p class="card-sub">Valores referentes ao 1º tempo ou ao momento do intervalo.</p>
+        <div class="ht-teams-grid">
+          <div class="ht-col card--team-a">
+            <h4 class="ht-team-title">Time A</h4>
+            <label class="field">
+              <span class="field-label">Gols (HT)</span>
+              <input id="golsA_ht" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Finalizações</span>
+              <input id="finalA" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Posse (%)</span>
+              <input id="posseA" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Escanteios</span>
+              <input id="escA" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Cartões</span>
+              <input id="cartA" type="number" min="0" inputmode="numeric">
+            </label>
+          </div>
+          <div class="ht-col card--team-b">
+            <h4 class="ht-team-title">Time B</h4>
+            <label class="field">
+              <span class="field-label">Gols (HT)</span>
+              <input id="golsB_ht" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Finalizações</span>
+              <input id="finalB" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Posse (%)</span>
+              <input id="posseB" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Escanteios</span>
+              <input id="escB" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Cartões</span>
+              <input id="cartB" type="number" min="0" inputmode="numeric">
+            </label>
+          </div>
+        </div>
+      </div>
 
-  <!-- 🔥 ÁREA EXPORTADA (BOX ÚNICO) -->
-  <div id="areaResultado" class="box">
+      <label class="field field--full export-note">
+        <span class="field-label">Legenda na imagem exportada</span>
+        <input id="descricaoImagem" placeholder="Ex.: Pré-jogo • Últimos 5 jogos • Brasileirão" type="text" autocomplete="off">
+      </label>
 
-    <canvas id="radar"></canvas>
+      <div class="actions">
+        <button type="button" id="btn_calcular" class="btn btn-primary">Calcular radar</button>
+        <button type="button" id="btn_download" class="btn btn-secondary">Baixar imagem (PNG)</button>
+      </div>
+    </section>
 
-    <hr class="divisor">
+    <section class="panel panel--result" aria-labelledby="titulo-resultado">
+      <h2 id="titulo-resultado" class="panel-title">Resultado</h2>
+      <p class="panel-hint">O gráfico e a leitura abaixo entram na captura ao usar “Baixar imagem”.</p>
 
-    <h2>Leitura do Radar</h2>
-    <div id="legendaConteudo"></div>
+      <div id="areaResultado" class="box export-area">
+        <div class="chart-wrap">
+          <canvas id="radar" aria-label="Gráfico radar comparando os dois times"></canvas>
+        </div>
 
-    <div id="rodapeImagem"></div>
+        <hr class="divisor">
 
-  </div>
+        <h3 class="readout-title">Leitura do radar</h3>
+        <div id="legendaConteudo" class="legenda-list"></div>
 
+        <div id="rodapeImagem" class="export-footer"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>FutStat Radar — uso informativo; ajuste os dados ao seu recorte estatístico.</span>
+  </footer>
 </div>
 
 <script src="script.js"></script>

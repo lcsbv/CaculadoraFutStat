@@ -16,6 +16,8 @@ function trocarModo(modo) {
   modoAtual = modo;
   btnPre.classList.toggle("ativo", modo === "PRE");
   btnHT.classList.toggle("ativo", modo === "HT");
+  btnPre.setAttribute("aria-selected", modo === "PRE" ? "true" : "false");
+  btnHT.setAttribute("aria-selected", modo === "HT" ? "true" : "false");
   boxTimeA.style.display = modo === "PRE" ? "block" : "none";
   boxTimeB.style.display = modo === "PRE" ? "block" : "none";
   boxHT.style.display = modo === "HT" ? "block" : "none";
@@ -35,11 +37,11 @@ function normalizar(v, min, max) {
 /* ===== LEGENDA ===== */
 const legendaTexto = {
   PRE: {
-    Ataque: ["Ataque forte → cria chances", "Ataque fraco → pouca criação"],
     Defesa: ["Defesa forte → sofre pouco", "Defesa fraca → vulnerável"],
-    Forma: ["Forma alta → confiança", "Forma baixa → instável"],
+    Consistência: ["Consistente → padrão", "Inconstante → oscila"],
     Eficiência: ["Eficiente → converte", "Ineficiente → desperdiça"],
-    Consistência: ["Consistente → padrão", "Inconstante → oscila"]
+    Ataque: ["Ataque forte → cria chances", "Ataque fraco → pouca criação"],
+    Forma: ["Forma alta → confiança", "Forma baixa → instável"]
   },
   HT: {
     Domínio: ["Domina o jogo", "Sofre imposição"],
@@ -52,23 +54,27 @@ const legendaTexto = {
 
 /* ===== PRÉ ===== */
 function calcularPre() {
-  const labels = ["Ataque", "Defesa", "Forma", "Eficiência", "Consistência"];
+  const labels = ["Defesa", "Consistência", "Eficiência", "Ataque", "Forma"];
 
-  const A = [
-    normalizar(ler("gmA") / ler("jogosA"), 0, 3),
-    100 - normalizar(ler("gsA") / ler("jogosA"), 0, 3),
-    normalizar(ler("pontosA"), 0, 15),
-    normalizar(ler("gmA") / (ler("gmA") + ler("gsA") + 1), 0, 1),
-    normalizar(1 - ler("gsA") / (ler("gmA") + 1), 0, 1)
-  ];
+  const gmA = ler("gmA");
+  const gsA = ler("gsA");
+  const jA = ler("jogosA");
+  const atkA = normalizar(gmA / jA, 0, 3);
+  const defA = 100 - normalizar(gsA / jA, 0, 3);
+  const formaA = normalizar(ler("pontosA"), 0, 15);
+  const eficA = normalizar(gmA / (gmA + gsA + 1), 0, 1);
+  const consA = normalizar(1 - gsA / (gmA + 1), 0, 1);
+  const A = [defA, consA, eficA, atkA, formaA];
 
-  const B = [
-    normalizar(ler("gmB") / ler("jogosB"), 0, 3),
-    100 - normalizar(ler("gsB") / ler("jogosB"), 0, 3),
-    normalizar(ler("pontosB"), 0, 15),
-    normalizar(ler("gmB") / (ler("gmB") + ler("gsB") + 1), 0, 1),
-    normalizar(1 - ler("gsB") / (ler("gmB") + 1), 0, 1)
-  ];
+  const gmB = ler("gmB");
+  const gsB = ler("gsB");
+  const jB = ler("jogosB");
+  const atkB = normalizar(gmB / jB, 0, 3);
+  const defB = 100 - normalizar(gsB / jB, 0, 3);
+  const formaB = normalizar(ler("pontosB"), 0, 15);
+  const eficB = normalizar(gmB / (gmB + gsB + 1), 0, 1);
+  const consB = normalizar(1 - gsB / (gmB + 1), 0, 1);
+  const B = [defB, consB, eficB, atkB, formaB];
 
   criarRadar(labels, A, B);
 }
@@ -99,36 +105,85 @@ function calcularHT() {
 function criarRadar(labels, A, B) {
   if (radarChart) radarChart.destroy();
 
+  const fontFamily = "'DM Sans', system-ui, sans-serif";
   radarChart = new Chart(radar, {
     type: "radar",
     data: {
       labels,
       datasets: [
-        { label: nomeA.value, data: A, backgroundColor: "rgba(0,119,204,.2)", borderColor: "#0077cc" },
-        { label: nomeB.value, data: B, backgroundColor: "rgba(220,53,69,.2)", borderColor: "#dc3545" }
+        {
+          label: nomeA.value,
+          data: A,
+          backgroundColor: "rgba(37, 99, 235, 0.22)",
+          borderColor: "#2563eb",
+          borderWidth: 2,
+          pointBackgroundColor: "#2563eb",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#2563eb"
+        },
+        {
+          label: nomeB.value,
+          data: B,
+          backgroundColor: "rgba(225, 29, 72, 0.18)",
+          borderColor: "#e11d48",
+          borderWidth: 2,
+          pointBackgroundColor: "#e11d48",
+          pointBorderColor: "#fff",
+          pointHoverBackgroundColor: "#fff",
+          pointHoverBorderColor: "#e11d48"
+        }
       ]
     },
-    options: { scales: { r: { min: 0, max: 100 } } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      scales: {
+        r: {
+          min: 0,
+          max: 100,
+          ticks: {
+            display: false
+          },
+          grid: { color: "rgba(100, 116, 139, 0.18)" },
+          angleLines: { color: "rgba(100, 116, 139, 0.12)" },
+          pointLabels: {
+            font: { family: fontFamily, size: 12, weight: "600" },
+            color: "#334155"
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            usePointStyle: true,
+            pointStyle: "circle",
+            padding: 18,
+            font: { family: fontFamily, size: 13, weight: "500" },
+            color: "#0f172a"
+          }
+        }
+      }
+    }
   });
 
-  gerarLegenda(labels, A, B);
+  gerarLegenda(labels);
 }
 
-function gerarLegenda(labels, A, B) {
+function gerarLegenda(labels) {
   legendaConteudo.innerHTML = "";
 
-  labels
-    .map((l, i) => ({ l, f: (A[i] + B[i]) / 2 }))
-    .sort((a, b) => b.f - a.f)
-    .forEach(item => {
-      legendaConteudo.innerHTML += `
+  labels.forEach(l => {
+    const [a, b] = legendaTexto[modoAtual][l];
+    legendaConteudo.innerHTML += `
         <div class="legenda-item">
-          <strong>${item.l}</strong><br>
-          ${legendaTexto[modoAtual][item.l][0]}<br>
-          ${legendaTexto[modoAtual][item.l][1]}
+          <strong>${l}</strong>
+          <span class="legenda-line">${a}</span>
+          <span class="legenda-line">${b}</span>
         </div>
       `;
-    });
+  });
 
   rodapeImagem.innerText = descricaoImagem.value;
 }
