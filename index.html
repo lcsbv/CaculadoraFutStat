@@ -52,16 +52,24 @@
             <input id="jogosA" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
           </label>
           <label class="field">
+            <span class="field-label">Vitórias</span>
+            <input id="vitoriasA" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Empates</span>
+            <input id="empatesA" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Derrotas</span>
+            <input id="derrotasA" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
             <span class="field-label">Gols marcados</span>
             <input id="gmA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
           </label>
           <label class="field">
             <span class="field-label">Gols sofridos</span>
             <input id="gsA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Pontos recentes</span>
-            <input id="pontosA" placeholder="Ex.: soma dos últimos jogos" type="number" inputmode="numeric">
           </label>
         </div>
 
@@ -76,16 +84,24 @@
             <input id="jogosB" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
           </label>
           <label class="field">
+            <span class="field-label">Vitórias</span>
+            <input id="vitoriasB" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Empates</span>
+            <input id="empatesB" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
+            <span class="field-label">Derrotas</span>
+            <input id="derrotasB" placeholder="0" type="number" min="0" inputmode="numeric">
+          </label>
+          <label class="field">
             <span class="field-label">Gols marcados</span>
             <input id="gmB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
           </label>
           <label class="field">
             <span class="field-label">Gols sofridos</span>
             <input id="gsB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Pontos recentes</span>
-            <input id="pontosB" placeholder="Ex.: soma dos últimos jogos" type="number" inputmode="numeric">
           </label>
         </div>
       </div>
@@ -159,14 +175,108 @@
       <p class="panel-hint">O gráfico e a leitura abaixo entram na captura ao usar “Baixar imagem”.</p>
 
       <div id="areaResultado" class="box export-area">
+        
+        <!-- Índices de Força -->
+        <div class="strength-section">
+          <h3 class="strength-title">Índice de Força</h3>
+          <div class="strength-bars">
+            <div class="strength-bar-item">
+              <div class="strength-team-name">
+                <span id="forceTeamA">Time A</span>
+              </div>
+              <div class="strength-bar-bg">
+                <div class="strength-bar-fill" id="forceBarA" style="width: 0%; background: #2563eb;"></div>
+              </div>
+              <div class="strength-value" id="forceValueA">-</div>
+            </div>
+            
+            <div class="strength-bar-item">
+              <div class="strength-team-name">
+                <span id="forceTeamB">Time B</span>
+              </div>
+              <div class="strength-bar-bg">
+                <div class="strength-bar-fill" id="forceBarB" style="width: 0%; background: #e11d48;"></div>
+              </div>
+              <div class="strength-value" id="forceValueB">-</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divisor">
+
+        <!-- Radar Comparativo -->
         <div class="chart-wrap">
           <canvas id="radar" aria-label="Gráfico radar comparando os dois times"></canvas>
         </div>
 
         <hr class="divisor">
 
-        <h3 class="readout-title">Leitura do radar</h3>
-        <div id="legendaConteudo" class="legenda-list"></div>
+        <!-- Probabilidades -->
+        <div class="probabilities-section">
+          <h3 class="prob-title">Probabilidade de Resultado</h3>
+          <div class="prob-grid">
+            <div class="prob-item prob-item-a">
+              <div class="prob-label" id="probLabelA">Vitória Time A</div>
+              <div class="prob-percentage" id="probValueA">-</div>
+              <div class="prob-bar-bg">
+                <div class="prob-bar-fill" id="probBarA" style="width: 0%; background: #2563eb;"></div>
+              </div>
+            </div>
+            <div class="prob-item prob-item-draw">
+              <div class="prob-label">Empate</div>
+              <div class="prob-percentage" id="probValueDraw">-</div>
+              <div class="prob-bar-bg">
+                <div class="prob-bar-fill" id="probBarDraw" style="width: 0%; background: #8b5cf6;"></div>
+              </div>
+            </div>
+            <div class="prob-item prob-item-b">
+              <div class="prob-label" id="probLabelB">Vitória Time B</div>
+              <div class="prob-percentage" id="probValueB">-</div>
+              <div class="prob-bar-bg">
+                <div class="prob-bar-fill" id="probBarB" style="width: 0%; background: #e11d48;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="divisor">
+
+        <!-- Estatísticas Detalhadas -->
+        <div class="stats-section">
+          <h3 class="stats-title">Estatísticas Detalhadas</h3>
+          <div class="stats-table">
+            <div class="stats-header">
+              <div class="stats-col"></div>
+              <div class="stats-col" id="statsTeamA">Time A</div>
+              <div class="stats-col" id="statsTeamB">Time B</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">Aproveitamento</div>
+              <div class="stats-cell" id="estatAproA">-</div>
+              <div class="stats-cell" id="estatAproB">-</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">Média de Gols Marcados</div>
+              <div class="stats-cell" id="estatAtkA">-</div>
+              <div class="stats-cell" id="estatAtkB">-</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">Média de Gols Sofridos</div>
+              <div class="stats-cell" id="estatDefA">-</div>
+              <div class="stats-cell" id="estatDefB">-</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">Saldo Médio</div>
+              <div class="stats-cell" id="estatSaldoA">-</div>
+              <div class="stats-cell" id="estatSaldoB">-</div>
+            </div>
+            <div class="stats-row">
+              <div class="stats-label">Pontos</div>
+              <div class="stats-cell" id="estatPtosA">-</div>
+              <div class="stats-cell" id="estatPtosB">-</div>
+            </div>
+          </div>
+        </div>
 
         <div id="rodapeImagem" class="export-footer"></div>
       </div>
