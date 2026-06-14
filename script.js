@@ -34,6 +34,51 @@ function ler(id) {
   return Number(document.getElementById(id).value) || 0;
 }
 
+// ===== CALCULAR POSSÍVEIS RESULTADOS =====
+function calcularResultados(ataqueA, defesaA, ataqueB, defesaB) {
+  // Média esperada de gols para cada time usando Poisson
+  const golsEsperadosA = ataqueA * (1 - (defesaB / 100));
+  const golsEsperadosB = ataqueB * (1 - (defesaA / 100));
+
+  // Calcular probabilidades de Poisson simplificadas para 0-4 gols
+  const probPoisson = (lambda, k) => {
+    if (lambda === 0) return k === 0 ? 1 : 0;
+    return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
+  };
+
+  const fatorial = (n) => n <= 1 ? 1 : n * fatorial(n - 1);
+
+  // Gerar todos os possíveis resultados com suas probabilidades
+  const resultados = [];
+  for (let gA = 0; gA <= 4; gA++) {
+    for (let gB = 0; gB <= 4; gB++) {
+      const prob = probPoisson(golsEsperadosA, gA) * probPoisson(golsEsperadosB, gB);
+      resultados.push({
+        placar: `${gA}–${gB}`,
+        golsA: gA,
+        golsB: gB,
+        prob: prob * 100
+      });
+    }
+  }
+
+  // Ordenar por probabilidade e pegar os 3 maiores
+  const top3 = resultados.sort((a, b) => b.prob - a.prob).slice(0, 3);
+  return top3;
+}
+
+function exibirResultados(resultados) {
+  const outcomesGrid = document.getElementById("outcomesGrid");
+  const items = outcomesGrid.querySelectorAll(".outcome-item");
+  
+  items.forEach((item, index) => {
+    if (resultados[index]) {
+      item.querySelector(".outcome-score").textContent = resultados[index].placar;
+      item.querySelector(".outcome-prob").textContent = resultados[index].prob.toFixed(1) + "%";
+    }
+  });
+}
+
 // ===== NORMALIZAÇÃO =====
 function normalizar(valor, min, max) {
   if (max - min === 0) return 50;
@@ -107,6 +152,11 @@ function calcularPre() {
   const dataB = [ataqueNormB, defesaNormB, aproveitamentoB, saldoNormB, pontosNormB];
 
   criarRadar(labels, dataA, dataB, nomeAText, nomeBText);
+  
+  // Calcular e exibir possíveis resultados
+  const possiveisResultados = calcularResultados(ataqueRawA, defesaRawA, ataqueRawB, defesaRawB);
+  exibirResultados(possiveisResultados);
+  
   atualizarResultados(
     nomeAText, nomeBText,
     forceA, forceB,
@@ -153,13 +203,17 @@ function calcularHT() {
   let probVitB = (forceB / somaForces) * 75;
   const probEmpate = 25;
 
+  // Calcular e exibir possíveis resultados para HT (usando força como proxy de ataque/defesa)
+  const possiveisResultados = calcularResultados(forceA / 20, 50, forceB / 20, 50);
+  exibirResultados(possiveisResultados);
+
   atualizarResultados(nomeAText, nomeBText, forceA, forceB, probVitA, probVitB, probEmpate, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
   if (radarChart) radarChart.destroy();
 
-  const fontFamily = "'DM Sans', system-ui, sans-serif";
+  const fontFamily = "'Outfit', system-ui, sans-serif";
   radarChart = new Chart(document.getElementById("radar"), {
     type: "radar",
     data: {
@@ -168,7 +222,7 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
         {
           label: nomeA,
           data: dataA,
-          backgroundColor: "rgba(37, 99, 235, 0.22)",
+          backgroundColor: "rgba(37, 99, 235, 0.15)",
           borderColor: "#2563eb",
           borderWidth: 2.5,
           pointBackgroundColor: "#2563eb",
@@ -183,14 +237,14 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
         {
           label: nomeB,
           data: dataB,
-          backgroundColor: "rgba(225, 29, 72, 0.18)",
-          borderColor: "#e11d48",
+          backgroundColor: "rgba(239, 68, 68, 0.15)",
+          borderColor: "#ef4444",
           borderWidth: 2.5,
-          pointBackgroundColor: "#e11d48",
+          pointBackgroundColor: "#ef4444",
           pointBorderColor: "#fff",
           pointBorderWidth: 2,
           pointHoverBackgroundColor: "#fff",
-          pointHoverBorderColor: "#e11d48",
+          pointHoverBorderColor: "#ef4444",
           pointHoverBorderWidth: 3,
           pointRadius: 5,
           pointHoverRadius: 7

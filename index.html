@@ -8,7 +8,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css">
 
@@ -43,66 +43,70 @@
       <div class="teams-grid">
         <div class="box card card--team-a" id="box_time_a">
           <h3 class="card-title">Time A</h3>
-          <label class="field">
-            <span class="field-label">Nome</span>
-            <input id="nomeA" type="text" value="Time A" autocomplete="off">
-          </label>
-          <label class="field">
-            <span class="field-label">Jogos analisados</span>
-            <input id="jogosA" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Vitórias</span>
-            <input id="vitoriasA" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Empates</span>
-            <input id="empatesA" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Derrotas</span>
-            <input id="derrotasA" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Gols marcados</span>
-            <input id="gmA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Gols sofridos</span>
-            <input id="gsA" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
+          <div class="card-fields">
+            <label class="field full-width">
+              <span class="field-label">Nome</span>
+              <input id="nomeA" type="text" value="Time A" autocomplete="off">
+            </label>
+            <label class="field full-width">
+              <span class="field-label">Jogos analisados</span>
+              <input id="jogosA" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Vitórias</span>
+              <input id="vitoriasA" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Empates</span>
+              <input id="empatesA" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Derrotas</span>
+              <input id="derrotasA" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Gols marcados</span>
+              <input id="gmA" placeholder="Total" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field full-width">
+              <span class="field-label">Gols sofridos</span>
+              <input id="gsA" placeholder="Total" type="number" min="0" inputmode="numeric">
+            </label>
+          </div>
         </div>
 
         <div class="box card card--team-b" id="box_time_b">
           <h3 class="card-title">Time B</h3>
-          <label class="field">
-            <span class="field-label">Nome</span>
-            <input id="nomeB" type="text" value="Time B" autocomplete="off">
-          </label>
-          <label class="field">
-            <span class="field-label">Jogos analisados</span>
-            <input id="jogosB" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Vitórias</span>
-            <input id="vitoriasB" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Empates</span>
-            <input id="empatesB" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Derrotas</span>
-            <input id="derrotasB" placeholder="0" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Gols marcados</span>
-            <input id="gmB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
-          <label class="field">
-            <span class="field-label">Gols sofridos</span>
-            <input id="gsB" placeholder="Total no período" type="number" min="0" inputmode="numeric">
-          </label>
+          <div class="card-fields">
+            <label class="field full-width">
+              <span class="field-label">Nome</span>
+              <input id="nomeB" type="text" value="Time B" autocomplete="off">
+            </label>
+            <label class="field full-width">
+              <span class="field-label">Jogos analisados</span>
+              <input id="jogosB" placeholder="Ex.: 10" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Vitórias</span>
+              <input id="vitoriasB" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Empates</span>
+              <input id="empatesB" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Derrotas</span>
+              <input id="derrotasB" placeholder="0" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field">
+              <span class="field-label">Gols marcados</span>
+              <input id="gmB" placeholder="Total" type="number" min="0" inputmode="numeric">
+            </label>
+            <label class="field full-width">
+              <span class="field-label">Gols sofridos</span>
+              <input id="gsB" placeholder="Total" type="number" min="0" inputmode="numeric">
+            </label>
+          </div>
         </div>
       </div>
 
@@ -112,49 +116,53 @@
         <div class="ht-teams-grid">
           <div class="ht-col card--team-a">
             <h4 class="ht-team-title">Time A</h4>
-            <label class="field">
-              <span class="field-label">Gols (HT)</span>
-              <input id="golsA_ht" placeholder="0" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Finalizações</span>
-              <input id="finalA" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Posse (%)</span>
-              <input id="posseA" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Escanteios</span>
-              <input id="escA" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Cartões</span>
-              <input id="cartA" type="number" min="0" inputmode="numeric">
-            </label>
+            <div class="card-fields">
+              <label class="field full-width">
+                <span class="field-label">Gols (HT)</span>
+                <input id="golsA_ht" placeholder="0" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Finalizações</span>
+                <input id="finalA" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Posse (%)</span>
+                <input id="posseA" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Escanteios</span>
+                <input id="escA" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Cartões</span>
+                <input id="cartA" type="number" min="0" inputmode="numeric">
+              </label>
+            </div>
           </div>
           <div class="ht-col card--team-b">
             <h4 class="ht-team-title">Time B</h4>
-            <label class="field">
-              <span class="field-label">Gols (HT)</span>
-              <input id="golsB_ht" placeholder="0" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Finalizações</span>
-              <input id="finalB" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Posse (%)</span>
-              <input id="posseB" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Escanteios</span>
-              <input id="escB" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Cartões</span>
-              <input id="cartB" type="number" min="0" inputmode="numeric">
-            </label>
+            <div class="card-fields">
+              <label class="field full-width">
+                <span class="field-label">Gols (HT)</span>
+                <input id="golsB_ht" placeholder="0" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Finalizações</span>
+                <input id="finalB" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Posse (%)</span>
+                <input id="posseB" placeholder="0–100" type="number" min="0" max="100" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Escanteios</span>
+                <input id="escB" type="number" min="0" inputmode="numeric">
+              </label>
+              <label class="field">
+                <span class="field-label">Cartões</span>
+                <input id="cartB" type="number" min="0" inputmode="numeric">
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -207,6 +215,27 @@
         <!-- Radar Comparativo -->
         <div class="chart-wrap">
           <canvas id="radar" aria-label="Gráfico radar comparando os dois times"></canvas>
+        </div>
+
+        <hr class="divisor">
+
+        <!-- Possíveis Resultados -->
+        <div class="possible-outcomes-section">
+          <h3 class="outcomes-title">Possíveis Resultados</h3>
+          <div class="outcomes-grid" id="outcomesGrid">
+            <div class="outcome-item outcome-1">
+              <div class="outcome-score">-</div>
+              <div class="outcome-prob">-</div>
+            </div>
+            <div class="outcome-item outcome-2">
+              <div class="outcome-score">-</div>
+              <div class="outcome-prob">-</div>
+            </div>
+            <div class="outcome-item outcome-3">
+              <div class="outcome-score">-</div>
+              <div class="outcome-prob">-</div>
+            </div>
+          </div>
         </div>
 
         <hr class="divisor">
