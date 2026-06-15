@@ -109,27 +109,37 @@ function calcularPre() {
   // Calcular métricas Time A
   const pontosA = (vitoriasA * 3) + empatesA;
   const aproveitamentoA = jogosA > 0 ? (pontosA / (jogosA * 3)) * 100 : 0;
-  const ataqueRawA = jogosA > 0 ? gmA / jogosA : 0;
-  const defesaRawA = jogosA > 0 ? gsA / jogosA : 0;
-  const saldoRawA = jogosA > 0 ? (gmA - gsA) / jogosA : 0;
+  let ataqueRawA = jogosA > 0 ? gmA / jogosA : 0;
+  let defesaRawA = jogosA > 0 ? gsA / jogosA : 0;
+  let saldoRawA = jogosA > 0 ? (gmA - gsA) / jogosA : 0;
+
+  // Aplicando teto estatístico (max 3 gols, saldo entre -3 e +3)
+  ataqueRawA = Math.min(ataqueRawA, 3);
+  defesaRawA = Math.min(defesaRawA, 3);
+  saldoRawA = Math.max(-3, Math.min(saldoRawA, 3));
 
   // Normalizar Time A
-  const ataqueNormA = normalizar(ataqueRawA, 0, 3.5);
-  const defesaNormA = 100 - normalizar(defesaRawA, 0, 3.5);
-  const saldoNormA = normalizar(saldoRawA, -2, 2);
+  const ataqueNormA = normalizar(ataqueRawA, 0, 3);
+  const defesaNormA = 100 - normalizar(defesaRawA, 0, 3);
+  const saldoNormA = normalizar(saldoRawA, -3, 3);
   const pontosNormA = normalizar(pontosA, 0, jogosA * 3);
 
   // Calcular métricas Time B
   const pontosB = (vitoriasB * 3) + empatesB;
   const aproveitamentoB = jogosB > 0 ? (pontosB / (jogosB * 3)) * 100 : 0;
-  const ataqueRawB = jogosB > 0 ? gmB / jogosB : 0;
-  const defesaRawB = jogosB > 0 ? gsB / jogosB : 0;
-  const saldoRawB = jogosB > 0 ? (gmB - gsB) / jogosB : 0;
+  let ataqueRawB = jogosB > 0 ? gmB / jogosB : 0;
+  let defesaRawB = jogosB > 0 ? gsB / jogosB : 0;
+  let saldoRawB = jogosB > 0 ? (gmB - gsB) / jogosB : 0;
+
+  // Aplicando teto estatístico (max 3 gols, saldo entre -3 e +3)
+  ataqueRawB = Math.min(ataqueRawB, 3);
+  defesaRawB = Math.min(defesaRawB, 3);
+  saldoRawB = Math.max(-3, Math.min(saldoRawB, 3));
 
   // Normalizar Time B
-  const ataqueNormB = normalizar(ataqueRawB, 0, 3.5);
-  const defesaNormB = 100 - normalizar(defesaRawB, 0, 3.5);
-  const saldoNormB = normalizar(saldoRawB, -2, 2);
+  const ataqueNormB = normalizar(ataqueRawB, 0, 3);
+  const defesaNormB = 100 - normalizar(defesaRawB, 0, 3);
+  const saldoNormB = normalizar(saldoRawB, -3, 3);
   const pontosNormB = normalizar(pontosB, 0, jogosB * 3);
 
   // Calcular Índice de Força
