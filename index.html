@@ -36,17 +36,6 @@
 
   <main class="app-main">
 
-    <section class="panel" aria-labelledby="titulo-sobre">
-      <h2 id="titulo-sobre" class="panel-title">Como Funciona o Radar</h2>
-      <div style="font-size: 1.05rem; color: #64748b; line-height: 1.6; font-weight: 500; margin-top: 12px;">
-        <p style="margin: 0 0 12px 0;"><strong style="color: #1b2559;">O sistema funciona como um radar de desempenho.</strong></p>
-        <p style="margin: 0 0 12px 0;">Em vez de analisar apenas a posição na tabela, ele avalia a forma recente das equipes utilizando métricas como <em style="color: #2563eb;">aproveitamento, ataque, defesa, saldo de gols e pontuação</em>.</p>
-        <p style="margin: 0 0 12px 0;">Esses indicadores são transformados em um <strong style="color: #1b2559;">Índice de Força</strong> que representa o momento atual de cada time.</p>
-        <p style="margin: 0 0 12px 0;">A partir dessa comparação, o algoritmo estima as probabilidades de vitória, empate e derrota, além de identificar os placares estatisticamente mais prováveis para o confronto.</p>
-        <p style="margin: 0;">O objetivo não é prever o futuro com certeza, mas fornecer uma <strong style="color: #1b2559;">análise baseada em dados</strong> para auxiliar na interpretação do jogo.</p>
-      </div>
-    </section>
-
     <section class="panel" aria-labelledby="titulo-dados">
       <h2 id="titulo-dados" class="panel-title">Dados de entrada</h2>
       <p class="panel-hint">Preencha os campos do período selecionado e calcule o radar para comparar os times.</p>
@@ -83,28 +72,6 @@
               <span class="field-label">Gols sofridos</span>
               <input id="gsA" placeholder="Total" type="number" min="0" inputmode="numeric">
             </label>
-            <label class="field full-width">
-              <span class="field-label">Mando de Campo</span>
-              <select id="mandoA" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.95rem; color: #1b2559; background: #f8fafc; font-weight: 600;">
-                <option value="1" selected>Mandante</option>
-                <option value="0">Visitante</option>
-                <option value="0.5">Neutro</option>
-              </select>
-            </label>
-            <label class="field">
-              <span class="field-label">Últimos 3J (Pontos)</span>
-              <input id="formaA" placeholder="0 a 9" type="number" min="0" max="9" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Adversários</span>
-              <select id="advA" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.95rem; color: #1b2559; background: #f8fafc; font-weight: 600;">
-                <option value="3" selected>Médio</option>
-                <option value="5">Muito Difícil</option>
-                <option value="4">Difícil</option>
-                <option value="2">Fácil</option>
-                <option value="1">Muito Fácil</option>
-              </select>
-            </label>
           </div>
         </div>
 
@@ -138,28 +105,6 @@
             <label class="field full-width">
               <span class="field-label">Gols sofridos</span>
               <input id="gsB" placeholder="Total" type="number" min="0" inputmode="numeric">
-            </label>
-            <label class="field full-width">
-              <span class="field-label">Mando de Campo</span>
-              <select id="mandoB" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.95rem; color: #1b2559; background: #f8fafc; font-weight: 600;">
-                <option value="1">Mandante</option>
-                <option value="0" selected>Visitante</option>
-                <option value="0.5">Neutro</option>
-              </select>
-            </label>
-            <label class="field">
-              <span class="field-label">Últimos 3J (Pontos)</span>
-              <input id="formaB" placeholder="0 a 9" type="number" min="0" max="9" inputmode="numeric">
-            </label>
-            <label class="field">
-              <span class="field-label">Adversários</span>
-              <select id="advB" style="width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid #e2e8f0; font-family: inherit; font-size: 0.95rem; color: #1b2559; background: #f8fafc; font-weight: 600;">
-                <option value="3" selected>Médio</option>
-                <option value="5">Muito Difícil</option>
-                <option value="4">Difícil</option>
-                <option value="2">Fácil</option>
-                <option value="1">Muito Fácil</option>
-              </select>
             </label>
           </div>
         </div>
@@ -325,51 +270,6 @@
 
         <hr class="divisor">
 
-        <!-- Gols Esperados (xG) e Clean Sheet -->
-        <div class="stats-section">
-          <h3 class="stats-title">Métricas de Jogo (Modelo Poisson)</h3>
-          <div class="stats-table">
-            <div class="stats-header">
-              <div class="stats-col">Métrica</div>
-              <div class="stats-col" id="xgTeamA">Time A</div>
-              <div class="stats-col" id="xgTeamB">Time B</div>
-            </div>
-            <div class="stats-row">
-              <div class="stats-label">Gols Esperados (xG)</div>
-              <div class="stats-cell" id="xgA" style="color: #2563eb;">-</div>
-              <div class="stats-cell" id="xgB" style="color: #e11d48;">-</div>
-            </div>
-            <div class="stats-row">
-              <div class="stats-label">Prob. Clean Sheet</div>
-              <div class="stats-cell" id="csA">-</div>
-              <div class="stats-cell" id="csB">-</div>
-            </div>
-          </div>
-        </div>
-
-        <hr class="divisor">
-
-        <!-- Mercados de Gols -->
-        <div class="probabilities-section">
-          <h3 class="prob-title">Mercados de Gols</h3>
-          <div class="prob-grid" id="marketsGrid">
-            <div class="prob-item" style="border-top: 4px solid #05cd99;">
-              <div class="prob-label">Mais de 1.5 Gols</div>
-              <div class="prob-percentage" id="probOver15">-</div>
-            </div>
-            <div class="prob-item" style="border-top: 4px solid #14b8a6;">
-              <div class="prob-label">Mais de 2.5 Gols</div>
-              <div class="prob-percentage" id="probOver25">-</div>
-            </div>
-            <div class="prob-item" style="border-top: 4px solid #f59e0b;">
-              <div class="prob-label">Ambas Marcam</div>
-              <div class="prob-percentage" id="probBTTS">-</div>
-            </div>
-          </div>
-        </div>
-
-        <hr class="divisor">
-
         <!-- Estatísticas Detalhadas -->
         <div class="stats-section">
           <h3 class="stats-title">Estatísticas Detalhadas</h3>
@@ -403,35 +303,6 @@
               <div class="stats-label">Pontos</div>
               <div class="stats-cell" id="estatPtosA">-</div>
               <div class="stats-cell" id="estatPtosB">-</div>
-            </div>
-          </div>
-        </div>
-
-        <hr class="divisor">
-
-        <!-- Ranking Final -->
-        <div class="ranking-section">
-          <h3 class="ranking-title">Meu ranking final para previsão</h3>
-          <div class="ranking-list">
-            <div class="ranking-item">
-              <span class="ranking-label">Aproveitamento</span>
-              <span class="ranking-stars">⭐⭐⭐⭐⭐</span>
-            </div>
-            <div class="ranking-item">
-              <span class="ranking-label">Defesa</span>
-              <span class="ranking-stars">⭐⭐⭐⭐⭐</span>
-            </div>
-            <div class="ranking-item">
-              <span class="ranking-label">Ataque</span>
-              <span class="ranking-stars">⭐⭐⭐⭐</span>
-            </div>
-            <div class="ranking-item">
-              <span class="ranking-label">Consistência</span>
-              <span class="ranking-stars">⭐⭐⭐⭐</span>
-            </div>
-            <div class="ranking-item">
-              <span class="ranking-label">Saldo</span>
-              <span class="ranking-stars">⭐⭐⭐</span>
             </div>
           </div>
         </div>

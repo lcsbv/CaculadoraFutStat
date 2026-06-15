@@ -34,56 +34,37 @@ function ler(id) {
   return Number(document.getElementById(id).value) || 0;
 }
 
-// ===== CALCULAR POSSÍVEIS RESULTADOS (MATRIZ POISSON) =====
-function calcularPoissonMatrix(xgA, xgB) {
+// ===== CALCULAR POSSÍVEIS RESULTADOS =====
+function calcularResultados(ataqueA, defesaA, ataqueB, defesaB) {
+  // Média esperada de gols para cada time usando Poisson
+  const golsEsperadosA = ataqueA * (1 - (defesaB / 100));
+  const golsEsperadosB = ataqueB * (1 - (defesaA / 100));
+
+  // Calcular probabilidades de Poisson simplificadas para 0-4 gols
   const probPoisson = (lambda, k) => {
-    const fatorial = (n) => n <= 1 ? 1 : n * fatorial(n - 1);
     if (lambda === 0) return k === 0 ? 1 : 0;
     return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
   };
 
-  let winA = 0, draw = 0, winB = 0;
-  let over15 = 0, over25 = 0, btts = 0;
-  let csA = 0, csB = 0;
-  
-  const scores = [];
+  const fatorial = (n) => n <= 1 ? 1 : n * fatorial(n - 1);
 
-  for (let gA = 0; gA <= 5; gA++) {
-    for (let gB = 0; gB <= 5; gB++) {
-      const prob = probPoisson(xgA, gA) * probPoisson(xgB, gB);
-      
-      scores.push({ placar: `${gA}–${gB}`, prob: prob * 100 });
-
-      if (gA > gB) winA += prob;
-      else if (gA === gB) draw += prob;
-      else winB += prob;
-
-      if (gA + gB > 1.5) over15 += prob;
-      if (gA + gB > 2.5) over25 += prob;
-      if (gA > 0 && gB > 0) btts += prob;
-      
-      // Clean sheet refers to NOT conceding goals.
-      // So Clean Sheet A = B scores 0.
-      if (gB === 0) csA += prob;
-      // Clean Sheet B = A scores 0.
-      if (gA === 0) csB += prob;
+  // Gerar todos os possíveis resultados com suas probabilidades
+  const resultados = [];
+  for (let gA = 0; gA <= 4; gA++) {
+    for (let gB = 0; gB <= 4; gB++) {
+      const prob = probPoisson(golsEsperadosA, gA) * probPoisson(golsEsperadosB, gB);
+      resultados.push({
+        placar: `${gA}–${gB}`,
+        golsA: gA,
+        golsB: gB,
+        prob: prob * 100
+      });
     }
   }
 
-  // Normalizar soma para 100% (cobre o pequeno residual > 5 gols)
-  const totalWDL = winA + draw + winB || 1;
-
-  return {
-    winA: (winA / totalWDL) * 100,
-    draw: (draw / totalWDL) * 100,
-    winB: (winB / totalWDL) * 100,
-    over15: over15 * 100,
-    over25: over25 * 100,
-    btts: btts * 100,
-    csA: csA * 100,
-    csB: csB * 100,
-    topScores: scores.sort((a, b) => b.prob - a.prob).slice(0, 3)
-  };
+  // Ordenar por probabilidade e pegar os 3 maiores
+  const top3 = resultados.sort((a, b) => b.prob - a.prob).slice(0, 3);
+  return top3;
 }
 
 function exibirResultados(resultados) {
@@ -125,86 +106,45 @@ function calcularPre() {
   const gmB = ler("gmB");
   const gsB = ler("gsB");
 
-  // Novos Inputs Time A
-  const mandoValA = Number(document.getElementById("mandoA").value) ?? 1;
-  const formaValA = Number(document.getElementById("formaA").value) || 0;
-  const advValA = Number(document.getElementById("advA").value) || 3;
-
-  // Novos Inputs Time B
-  const mandoValB = Number(document.getElementById("mandoB").value) ?? 0;
-  const formaValB = Number(document.getElementById("formaB").value) || 0;
-  const advValB = Number(document.getElementById("advB").value) || 3;
-
   // Calcular métricas Time A
   const pontosA = (vitoriasA * 3) + empatesA;
   const aproveitamentoA = jogosA > 0 ? (pontosA / (jogosA * 3)) * 100 : 0;
-  let ataqueRawA = jogosA > 0 ? gmA / jogosA : 0;
-  let defesaRawA = jogosA > 0 ? gsA / jogosA : 0;
-  let saldoRawA = jogosA > 0 ? (gmA - gsA) / jogosA : 0;
+  const ataqueRawA = jogosA > 0 ? gmA / jogosA : 0;
+  const defesaRawA = jogosA > 0 ? gsA / jogosA : 0;
+  const saldoRawA = jogosA > 0 ? (gmA - gsA) / jogosA : 0;
 
-  ataqueRawA = Math.min(ataqueRawA, 3);
-  defesaRawA = Math.min(defesaRawA, 3);
-  saldoRawA = Math.max(-3, Math.min(saldoRawA, 3));
-
-  const ataqueNormA = normalizar(ataqueRawA, 0, 3);
-  const defesaNormA = 100 - normalizar(defesaRawA, 0, 3);
-  const saldoNormA = normalizar(saldoRawA, -3, 3);
+  // Normalizar Time A
+  const ataqueNormA = normalizar(ataqueRawA, 0, 3.5);
+  const defesaNormA = 100 - normalizar(defesaRawA, 0, 3.5);
+  const saldoNormA = normalizar(saldoRawA, -2, 2);
   const pontosNormA = normalizar(pontosA, 0, jogosA * 3);
 
   // Calcular métricas Time B
   const pontosB = (vitoriasB * 3) + empatesB;
   const aproveitamentoB = jogosB > 0 ? (pontosB / (jogosB * 3)) * 100 : 0;
-  let ataqueRawB = jogosB > 0 ? gmB / jogosB : 0;
-  let defesaRawB = jogosB > 0 ? gsB / jogosB : 0;
-  let saldoRawB = jogosB > 0 ? (gmB - gsB) / jogosB : 0;
+  const ataqueRawB = jogosB > 0 ? gmB / jogosB : 0;
+  const defesaRawB = jogosB > 0 ? gsB / jogosB : 0;
+  const saldoRawB = jogosB > 0 ? (gmB - gsB) / jogosB : 0;
 
-  ataqueRawB = Math.min(ataqueRawB, 3);
-  defesaRawB = Math.min(defesaRawB, 3);
-  saldoRawB = Math.max(-3, Math.min(saldoRawB, 3));
-
-  const ataqueNormB = normalizar(ataqueRawB, 0, 3);
-  const defesaNormB = 100 - normalizar(defesaRawB, 0, 3);
-  const saldoNormB = normalizar(saldoRawB, -3, 3);
+  // Normalizar Time B
+  const ataqueNormB = normalizar(ataqueRawB, 0, 3.5);
+  const defesaNormB = 100 - normalizar(defesaRawB, 0, 3.5);
+  const saldoNormB = normalizar(saldoRawB, -2, 2);
   const pontosNormB = normalizar(pontosB, 0, jogosB * 3);
 
-  // === CAMADA 1: NOVO ÍNDICE DE FORÇA ===
-  const forceA = (aproveitamentoA * 0.25) + 
-                 (ataqueNormA * 0.20) + 
-                 (defesaNormA * 0.20) + 
-                 (mandoValA * 15) + 
-                 ((Math.min(formaValA, 9) / 9) * 10) + 
-                 ((advValA / 5) * 10);
+  // Calcular Índice de Força
+  const forceA = (ataqueNormA * 0.40) + (defesaNormA * 0.30) + (aproveitamentoA * 0.30);
+  const forceB = (ataqueNormB * 0.40) + (defesaNormB * 0.30) + (aproveitamentoB * 0.30);
 
-  const forceB = (aproveitamentoB * 0.25) + 
-                 (ataqueNormB * 0.20) + 
-                 (defesaNormB * 0.20) + 
-                 (mandoValB * 15) + 
-                 ((Math.min(formaValB, 9) / 9) * 10) + 
-                 ((advValB / 5) * 10);
+  // Calcular probabilidades
+  const somaForces = forceA + forceB || 1;
+  let probVitA = (forceA / somaForces) * 100;
+  let probVitB = (forceB / somaForces) * 100;
+  const probEmpate = 25; // 25% reservado para empate
 
-  // === CAMADA 2: GOLS ESPERADOS (xG) ===
-  const MEDIA_LIGA = 1.35; // Média global de gols assumida
-  
-  // Base xG
-  let xgBaseA = ataqueRawA > 0 && defesaRawB > 0 ? ataqueRawA * (defesaRawB / MEDIA_LIGA) : MEDIA_LIGA;
-  let xgBaseB = ataqueRawB > 0 && defesaRawA > 0 ? ataqueRawB * (defesaRawA / MEDIA_LIGA) : MEDIA_LIGA;
-
-  // Ajuste fino com o Índice de Força (SI)
-  const diffA = forceA - forceB;
-  xgBaseA = xgBaseA * (1 + (diffA * 0.005));
-  
-  const diffB = forceB - forceA;
-  xgBaseB = xgBaseB * (1 + (diffB * 0.005));
-
-  // Ajuste do Mando de Campo no xG
-  xgBaseA = xgBaseA * (1 + (mandoValA === 1 ? 0.15 : (mandoValA === 0 ? -0.05 : 0.05)));
-  xgBaseB = xgBaseB * (1 + (mandoValB === 1 ? 0.15 : (mandoValB === 0 ? -0.05 : 0.05)));
-
-  const xgA = Math.max(0.1, xgBaseA);
-  const xgB = Math.max(0.1, xgBaseB);
-
-  // === CAMADA 3: DISTRIBUIÇÃO DE POISSON ===
-  const poisson = calcularPoissonMatrix(xgA, xgB);
+  // Ajustar proporcionalmente
+  probVitA = (probVitA / 100) * 75;
+  probVitB = (probVitB / 100) * 75;
 
   // Dados do radar
   const labels = ["Ataque", "Defesa", "Aproveitamento", "Saldo", "Pontos"];
@@ -213,21 +153,19 @@ function calcularPre() {
 
   criarRadar(labels, dataA, dataB, nomeAText, nomeBText);
   
-  // Exibir placares
-  exibirResultados(poisson.topScores);
+  // Calcular e exibir possíveis resultados
+  const possiveisResultados = calcularResultados(ataqueRawA, defesaRawA, ataqueRawB, defesaRawB);
+  exibirResultados(possiveisResultados);
   
   atualizarResultados(
     nomeAText, nomeBText,
     forceA, forceB,
-    poisson.winA, poisson.winB, poisson.draw,
+    probVitA, probVitB, probEmpate,
     aproveitamentoA, aproveitamentoB,
     ataqueRawA, ataqueRawB,
     defesaRawA, defesaRawB,
     saldoRawA, saldoRawB,
-    pontosA, pontosB,
-    xgA, xgB,
-    poisson.csA, poisson.csB,
-    poisson.over15, poisson.over25, poisson.btts
+    pontosA, pontosB
   );
 }
 
@@ -260,20 +198,16 @@ function calcularHT() {
   const forceA = (A[2] * 0.40) + (100 - A[1] * 0.30) + (A[0] * 0.30);
   const forceB = (B[2] * 0.40) + (100 - B[1] * 0.30) + (B[0] * 0.30);
 
-  // Para HT, faremos um xG derivado puramente das estatísticas de intervalo
-  const xgHT_A = Math.max(0.1, (forceA / 50) * 0.8);
-  const xgHT_B = Math.max(0.1, (forceB / 50) * 0.8);
+  const somaForces = forceA + forceB || 1;
+  let probVitA = (forceA / somaForces) * 75;
+  let probVitB = (forceB / somaForces) * 75;
+  const probEmpate = 25;
 
-  const poisson = calcularPoissonMatrix(xgHT_A, xgHT_B);
-  exibirResultados(poisson.topScores);
+  // Calcular e exibir possíveis resultados para HT (usando força como proxy de ataque/defesa)
+  const possiveisResultados = calcularResultados(forceA / 20, 50, forceB / 20, 50);
+  exibirResultados(possiveisResultados);
 
-  atualizarResultados(
-    nomeAText, nomeBText, 
-    forceA, forceB, 
-    poisson.winA, poisson.winB, poisson.draw, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    xgHT_A, xgHT_B, poisson.csA, poisson.csB, poisson.over15, poisson.over25, poisson.btts
-  );
+  atualizarResultados(nomeAText, nomeBText, forceA, forceB, probVitA, probVitB, probEmpate, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
@@ -362,28 +296,23 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
   });
 }
 
-function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, probEmpate, aproA, aproB, atkA, atkB, defA, defB, saldoA, saldoB, ptosA, ptosB, xgA, xgB, csA, csB, probOver15, probOver25, probBTTS) {
+function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, probEmpate, aproA, aproB, atkA, atkB, defA, defB, saldoA, saldoB, ptosA, ptosB) {
   // Atualizar nomes nos resultados
   document.getElementById("forceTeamA").textContent = nomeA;
   document.getElementById("forceTeamB").textContent = nomeB;
   document.getElementById("probLabelA").textContent = `Vitória ${nomeA}`;
   document.getElementById("probLabelB").textContent = `Vitória ${nomeB}`;
-  
-  if (document.getElementById("statsTeamA")) {
-    document.getElementById("statsTeamA").textContent = nomeA;
-    document.getElementById("statsTeamB").textContent = nomeB;
-    document.getElementById("xgTeamA").textContent = nomeA;
-    document.getElementById("xgTeamB").textContent = nomeB;
-  }
+  document.getElementById("statsTeamA").textContent = nomeA;
+  document.getElementById("statsTeamB").textContent = nomeB;
 
   // Atualizar Índice de Força
-  document.getElementById("forceBarA").style.width = Math.min(100, forceA) + "%";
+  document.getElementById("forceBarA").style.width = forceA + "%";
   document.getElementById("forceValueA").textContent = forceA.toFixed(1);
   
-  document.getElementById("forceBarB").style.width = Math.min(100, forceB) + "%";
+  document.getElementById("forceBarB").style.width = forceB + "%";
   document.getElementById("forceValueB").textContent = forceB.toFixed(1);
 
-  // Atualizar Probabilidades (Poisson)
+  // Atualizar Probabilidades
   document.getElementById("probValueA").textContent = probVitA.toFixed(1) + "%";
   document.getElementById("probBarA").style.width = probVitA + "%";
   
@@ -393,19 +322,8 @@ function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, p
   document.getElementById("probValueB").textContent = probVitB.toFixed(1) + "%";
   document.getElementById("probBarB").style.width = probVitB + "%";
 
-  // Atualizar Novos Mercados
-  if (document.getElementById("xgA")) {
-    document.getElementById("xgA").textContent = xgA.toFixed(2);
-    document.getElementById("xgB").textContent = xgB.toFixed(2);
-    document.getElementById("csA").textContent = csA.toFixed(1) + "%";
-    document.getElementById("csB").textContent = csB.toFixed(1) + "%";
-    document.getElementById("probOver15").textContent = probOver15.toFixed(1) + "%";
-    document.getElementById("probOver25").textContent = probOver25.toFixed(1) + "%";
-    document.getElementById("probBTTS").textContent = probBTTS.toFixed(1) + "%";
-  }
-
   // Atualizar Estatísticas (apenas se estiver em modo PRÉ)
-  if (modoAtual === "PRE" && document.getElementById("estatAproA")) {
+  if (modoAtual === "PRE") {
     document.getElementById("estatAproA").textContent = aproA.toFixed(1) + "%";
     document.getElementById("estatAproB").textContent = aproB.toFixed(1) + "%";
     
