@@ -40,7 +40,7 @@ function calcularResultados(ataqueA, defesaA, ataqueB, defesaB) {
   const golsEsperadosA = ataqueA * (1 - (defesaB / 100));
   const golsEsperadosB = ataqueB * (1 - (defesaA / 100));
 
-  // Calcular probabilidades de Poisson simplificadas para 0-3 gols (cap de 3)
+  // Calcular probabilidades de Poisson simplificadas para 0-4 gols
   const probPoisson = (lambda, k) => {
     if (lambda === 0) return k === 0 ? 1 : 0;
     return (Math.pow(lambda, k) * Math.exp(-lambda)) / fatorial(k);
@@ -48,10 +48,10 @@ function calcularResultados(ataqueA, defesaA, ataqueB, defesaB) {
 
   const fatorial = (n) => n <= 1 ? 1 : n * fatorial(n - 1);
 
-  // Gerar todos os possíveis resultados com suas probabilidades (máx 3 gols por time)
+  // Gerar todos os possíveis resultados com suas probabilidades
   const resultados = [];
-  for (let gA = 0; gA <= GOLS_CAP; gA++) {
-    for (let gB = 0; gB <= GOLS_CAP; gB++) {
+  for (let gA = 0; gA <= 4; gA++) {
+    for (let gB = 0; gB <= 4; gB++) {
       const prob = probPoisson(golsEsperadosA, gA) * probPoisson(golsEsperadosB, gB);
       resultados.push({
         placar: `${gA}–${gB}`,
@@ -85,40 +85,6 @@ function normalizar(valor, min, max) {
   return Math.max(0, Math.min(100, ((valor - min) / (max - min)) * 100));
 }
 
-// ===== RETORNO DECRESCENTE DE GOLS =====
-// Dado uma média bruta de gols por jogo (lambda), calcula a média efetiva
-// limitando a no máximo CAP gols por partida, usando distribuição de Poisson.
-// Isso modela o retorno decrescente: marcar 2 gols vale muito,
-// mas o 6º, 7º ou 8º gol na mesma partida têm peso cada vez menor.
-// E[min(X, cap)] = sum(k=0..cap-1) k*P(X=k) + cap*P(X>=cap)
-function golsComRetornoDecrescente(mediaRaw, cap) {
-  if (mediaRaw <= 0) return 0;
-  const lambda = mediaRaw;
-
-  // Função Poisson P(X = k)
-  const poissonPMF = (k) => {
-    if (lambda === 0) return k === 0 ? 1 : 0;
-    let logP = -lambda + k * Math.log(lambda);
-    for (let i = 2; i <= k; i++) logP -= Math.log(i);
-    return Math.exp(logP);
-  };
-
-  // E[min(X, cap)] = Σ k * P(X=k) para k=0..cap-1, + cap * P(X >= cap)
-  let esperado = 0;
-  let somaProb = 0; // Σ P(X=k) para k=0..cap-1
-  for (let k = 0; k < cap; k++) {
-    const p = poissonPMF(k);
-    esperado += k * p;
-    somaProb += p;
-  }
-  // P(X >= cap) = 1 - Σ P(X=k) para k=0..cap-1
-  esperado += cap * (1 - somaProb);
-
-  return esperado;
-}
-
-const GOLS_CAP = 3; // Máximo de gols considerados por partida
-
 // ===== CÁLCULOS PRÉ-JOGO =====
 function calcularPre() {
   const nomeAText = document.getElementById("nomeA").value || "Time A";
@@ -140,36 +106,30 @@ function calcularPre() {
   const gmB = ler("gmB");
   const gsB = ler("gsB");
 
-  // Médias brutas de gols por jogo
-  const ataqueRawBrutoA = jogosA > 0 ? gmA / jogosA : 0;
-  const defesaRawBrutaA = jogosA > 0 ? gsA / jogosA : 0;
-  const ataqueRawBrutoB = jogosB > 0 ? gmB / jogosB : 0;
-  const defesaRawBrutaB = jogosB > 0 ? gsB / jogosB : 0;
-
-  // Calcular métricas Time A (com retorno decrescente, cap de 3 gols/jogo)
+  // Calcular métricas Time A
   const pontosA = (vitoriasA * 3) + empatesA;
   const aproveitamentoA = jogosA > 0 ? (pontosA / (jogosA * 3)) * 100 : 0;
-  const ataqueRawA = golsComRetornoDecrescente(ataqueRawBrutoA, GOLS_CAP);
-  const defesaRawA = golsComRetornoDecrescente(defesaRawBrutaA, GOLS_CAP);
-  const saldoRawA = ataqueRawA - defesaRawA;
+  const ataqueRawA = jogosA > 0 ? gmA / jogosA : 0;
+  const defesaRawA = jogosA > 0 ? gsA / jogosA : 0;
+  const saldoRawA = jogosA > 0 ? (gmA - gsA) / jogosA : 0;
 
-  // Normalizar Time A (max ajustado para o cap de 3)
-  const ataqueNormA = normalizar(ataqueRawA, 0, GOLS_CAP);
-  const defesaNormA = 100 - normalizar(defesaRawA, 0, GOLS_CAP);
-  const saldoNormA = normalizar(saldoRawA, -GOLS_CAP, GOLS_CAP);
+  // Normalizar Time A
+  const ataqueNormA = normalizar(ataqueRawA, 0, 3.5);
+  const defesaNormA = 100 - normalizar(defesaRawA, 0, 3.5);
+  const saldoNormA = normalizar(saldoRawA, -2, 2);
   const pontosNormA = normalizar(pontosA, 0, jogosA * 3);
 
-  // Calcular métricas Time B (com retorno decrescente, cap de 3 gols/jogo)
+  // Calcular métricas Time B
   const pontosB = (vitoriasB * 3) + empatesB;
   const aproveitamentoB = jogosB > 0 ? (pontosB / (jogosB * 3)) * 100 : 0;
-  const ataqueRawB = golsComRetornoDecrescente(ataqueRawBrutoB, GOLS_CAP);
-  const defesaRawB = golsComRetornoDecrescente(defesaRawBrutaB, GOLS_CAP);
-  const saldoRawB = ataqueRawB - defesaRawB;
+  const ataqueRawB = jogosB > 0 ? gmB / jogosB : 0;
+  const defesaRawB = jogosB > 0 ? gsB / jogosB : 0;
+  const saldoRawB = jogosB > 0 ? (gmB - gsB) / jogosB : 0;
 
-  // Normalizar Time B (max ajustado para o cap de 3)
-  const ataqueNormB = normalizar(ataqueRawB, 0, GOLS_CAP);
-  const defesaNormB = 100 - normalizar(defesaRawB, 0, GOLS_CAP);
-  const saldoNormB = normalizar(saldoRawB, -GOLS_CAP, GOLS_CAP);
+  // Normalizar Time B
+  const ataqueNormB = normalizar(ataqueRawB, 0, 3.5);
+  const defesaNormB = 100 - normalizar(defesaRawB, 0, 3.5);
+  const saldoNormB = normalizar(saldoRawB, -2, 2);
   const pontosNormB = normalizar(pontosB, 0, jogosB * 3);
 
   // Calcular Índice de Força
@@ -193,8 +153,8 @@ function calcularPre() {
 
   criarRadar(labels, dataA, dataB, nomeAText, nomeBText);
   
-  // Calcular e exibir possíveis resultados (usando médias com cap)
-  const possiveisResultados = calcularResultados(ataqueRawA, defesaRawA * (100 / GOLS_CAP), ataqueRawB, defesaRawB * (100 / GOLS_CAP));
+  // Calcular e exibir possíveis resultados
+  const possiveisResultados = calcularResultados(ataqueRawA, defesaRawA, ataqueRawB, defesaRawB);
   exibirResultados(possiveisResultados);
   
   atualizarResultados(
@@ -262,32 +222,32 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
         {
           label: nomeA,
           data: dataA,
-          backgroundColor: "rgba(59, 130, 246, 0.2)",
-          borderColor: "#3b82f6",
+          backgroundColor: "rgba(37, 99, 235, 0.15)",
+          borderColor: "#2563eb",
           borderWidth: 2.5,
-          pointBackgroundColor: "#3b82f6",
+          pointBackgroundColor: "#2563eb",
           pointBorderColor: "#fff",
           pointBorderWidth: 2,
           pointHoverBackgroundColor: "#fff",
-          pointHoverBorderColor: "#3b82f6",
+          pointHoverBorderColor: "#2563eb",
           pointHoverBorderWidth: 3,
-          pointRadius: 4,
-          pointHoverRadius: 6
+          pointRadius: 5,
+          pointHoverRadius: 7
         },
         {
           label: nomeB,
           data: dataB,
-          backgroundColor: "rgba(244, 63, 94, 0.2)",
-          borderColor: "#f43f5e",
+          backgroundColor: "rgba(239, 68, 68, 0.15)",
+          borderColor: "#ef4444",
           borderWidth: 2.5,
-          pointBackgroundColor: "#f43f5e",
+          pointBackgroundColor: "#ef4444",
           pointBorderColor: "#fff",
           pointBorderWidth: 2,
           pointHoverBackgroundColor: "#fff",
-          pointHoverBorderColor: "#f43f5e",
+          pointHoverBorderColor: "#ef4444",
           pointHoverBorderWidth: 3,
-          pointRadius: 4,
-          pointHoverRadius: 6
+          pointRadius: 5,
+          pointHoverRadius: 7
         }
       ]
     },
@@ -300,16 +260,15 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
           max: 100,
           ticks: {
             display: true,
-            font: { family: fontFamily, size: 10, weight: "500" },
-            color: "#7a85a8",
-            backdropColor: "transparent"
-          },
-          grid: { color: "rgba(255, 255, 255, 0.05)" },
-          angleLines: { color: "rgba(255, 255, 255, 0.1)" },
-          pointLabels: {
             font: { family: fontFamily, size: 11, weight: "500" },
-            color: "#e2e8f4",
-            padding: 12
+            color: "#64748b"
+          },
+          grid: { color: "rgba(100, 116, 139, 0.15)" },
+          angleLines: { color: "rgba(100, 116, 139, 0.1)" },
+          pointLabels: {
+            font: { family: fontFamily, size: 12, weight: "600" },
+            color: "#334155",
+            padding: 8
           }
         }
       },
@@ -321,7 +280,7 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
             pointStyle: "circle",
             padding: 18,
             font: { family: fontFamily, size: 13, weight: "500" },
-            color: "#e2e8f4",
+            color: "#0f172a",
             boxWidth: 8
           }
         },
