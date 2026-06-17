@@ -17,6 +17,27 @@ boxHT.style.display = "none";
 btnPre.onclick = () => trocarModo("PRE");
 btnHT.onclick = () => trocarModo("HT");
 
+const inputPosseA = document.getElementById("posseA");
+const inputPosseB = document.getElementById("posseB");
+
+inputPosseA.addEventListener("input", () => {
+  let val = Number(inputPosseA.value);
+  if (val >= 0 && val <= 100 && inputPosseA.value !== "") {
+    inputPosseB.value = 100 - val;
+  } else if (inputPosseA.value === "") {
+    inputPosseB.value = "";
+  }
+});
+
+inputPosseB.addEventListener("input", () => {
+  let val = Number(inputPosseB.value);
+  if (val >= 0 && val <= 100 && inputPosseB.value !== "") {
+    inputPosseA.value = 100 - val;
+  } else if (inputPosseB.value === "") {
+    inputPosseA.value = "";
+  }
+});
+
 function trocarModo(modo) {
   modoAtual = modo;
   btnPre.classList.toggle("ativo", modo === "PRE");
