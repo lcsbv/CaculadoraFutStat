@@ -62,9 +62,9 @@ function calcularResultados(ataqueA, defesaA, ataqueB, defesaB) {
     }
   }
 
-  // Ordenar por probabilidade e pegar os 3 maiores
-  const top3 = resultados.sort((a, b) => b.prob - a.prob).slice(0, 3);
-  return top3;
+  // Ordenar por probabilidade e pegar os 5 maiores
+  const top5 = resultados.sort((a, b) => b.prob - a.prob).slice(0, 5);
+  return top5;
 }
 
 function exibirResultados(resultados) {
@@ -194,20 +194,31 @@ function calcularHT() {
 
   criarRadar(labels, A, B, nomeAText, nomeBText);
 
-  // Para modo HT, usar as médias dos dados de força do modo pré
-  const forceA = (A[2] * 0.40) + (100 - A[1] * 0.30) + (A[0] * 0.30);
-  const forceB = (B[2] * 0.40) + (100 - B[1] * 0.30) + (B[0] * 0.30);
+  // Para modo HT, usar métricas de força HT (Perigo, Pressão, Domínio)
+  const forceA = (A[2] * 0.40) + (A[1] * 0.30) + (A[0] * 0.30);
+  const forceB = (B[2] * 0.40) + (B[1] * 0.30) + (B[0] * 0.30);
 
-  const somaForces = forceA + forceB || 1;
-  let probVitA = (forceA / somaForces) * 75;
-  let probVitB = (forceB / somaForces) * 75;
-  const probEmpate = 25;
+  // Lógica para Chance do Próximo Gol
+  let probSemGol = 35 - ((A[1] + B[1] + A[2] + B[2]) / 400) * 25; 
+  if (probSemGol < 5) probSemGol = 5;
+  if (A[1] + B[1] === 0) probSemGol = 80;
+  
+  const restante = 100 - probSemGol;
+  let probGolA = 0, probGolB = 0;
+  
+  const pesoA = A[1] * 1.5 + A[2] * 2 + A[0] * 0.5;
+  const pesoB = B[1] * 1.5 + B[2] * 2 + B[0] * 0.5;
+  
+  if (pesoA + pesoB > 0) {
+    probGolA = (pesoA / (pesoA + pesoB)) * restante;
+    probGolB = (pesoB / (pesoA + pesoB)) * restante;
+  }
 
   // Calcular e exibir possíveis resultados para HT (usando força como proxy de ataque/defesa)
   const possiveisResultados = calcularResultados(forceA / 20, 50, forceB / 20, 50);
   exibirResultados(possiveisResultados);
 
-  atualizarResultados(nomeAText, nomeBText, forceA, forceB, probVitA, probVitB, probEmpate, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  atualizarResultados(nomeAText, nomeBText, forceA, forceB, probGolA, probGolB, probSemGol, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
@@ -226,9 +237,9 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
           borderColor: "#2563eb",
           borderWidth: 2.5,
           pointBackgroundColor: "#2563eb",
-          pointBorderColor: "#fff",
+          pointBorderColor: "#1e293b",
           pointBorderWidth: 2,
-          pointHoverBackgroundColor: "#fff",
+          pointHoverBackgroundColor: "#1e293b",
           pointHoverBorderColor: "#2563eb",
           pointHoverBorderWidth: 3,
           pointRadius: 5,
@@ -241,9 +252,9 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
           borderColor: "#ef4444",
           borderWidth: 2.5,
           pointBackgroundColor: "#ef4444",
-          pointBorderColor: "#fff",
+          pointBorderColor: "#1e293b",
           pointBorderWidth: 2,
-          pointHoverBackgroundColor: "#fff",
+          pointHoverBackgroundColor: "#1e293b",
           pointHoverBorderColor: "#ef4444",
           pointHoverBorderWidth: 3,
           pointRadius: 5,
@@ -261,13 +272,14 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
           ticks: {
             display: true,
             font: { family: fontFamily, size: 11, weight: "500" },
-            color: "#64748b"
+            color: "#94a3b8",
+            backdropColor: "transparent"
           },
-          grid: { color: "rgba(100, 116, 139, 0.15)" },
-          angleLines: { color: "rgba(100, 116, 139, 0.1)" },
+          grid: { color: "rgba(148, 163, 184, 0.15)" },
+          angleLines: { color: "rgba(148, 163, 184, 0.1)" },
           pointLabels: {
             font: { family: fontFamily, size: 12, weight: "600" },
-            color: "#334155",
+            color: "#f8fafc",
             padding: 8
           }
         }
@@ -280,7 +292,7 @@ function criarRadar(labels, dataA, dataB, nomeA, nomeB) {
             pointStyle: "circle",
             padding: 18,
             font: { family: fontFamily, size: 13, weight: "500" },
-            color: "#0f172a",
+            color: "#f8fafc",
             boxWidth: 8
           }
         },
@@ -300,8 +312,19 @@ function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, p
   // Atualizar nomes nos resultados
   document.getElementById("forceTeamA").textContent = nomeA;
   document.getElementById("forceTeamB").textContent = nomeB;
-  document.getElementById("probLabelA").textContent = `Vitória ${nomeA}`;
-  document.getElementById("probLabelB").textContent = `Vitória ${nomeB}`;
+  
+  if (modoAtual === "PRE") {
+    document.getElementById("probTitle").textContent = "Probabilidade de Resultado";
+    document.getElementById("probLabelA").textContent = `Vitória ${nomeA}`;
+    document.getElementById("probLabelB").textContent = `Vitória ${nomeB}`;
+    document.getElementById("probLabelDraw").textContent = "Empate";
+  } else {
+    document.getElementById("probTitle").textContent = "Chance do Próximo Gol";
+    document.getElementById("probLabelA").textContent = `Gol ${nomeA}`;
+    document.getElementById("probLabelB").textContent = `Gol ${nomeB}`;
+    document.getElementById("probLabelDraw").textContent = "Sem Gol";
+  }
+
   document.getElementById("statsTeamA").textContent = nomeA;
   document.getElementById("statsTeamB").textContent = nomeB;
 
@@ -322,8 +345,17 @@ function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, p
   document.getElementById("probValueB").textContent = probVitB.toFixed(1) + "%";
   document.getElementById("probBarB").style.width = probVitB + "%";
 
-  // Atualizar Estatísticas (apenas se estiver em modo PRÉ)
+  // Exibir/ocultar seções baseadas no modo
+  const statsSection = document.querySelector(".stats-section");
+  const outcomesSection = document.querySelector(".possible-outcomes-section");
+  const divisors = document.querySelectorAll(".divisor");
+  
   if (modoAtual === "PRE") {
+    if (statsSection) statsSection.style.display = "block";
+    if (outcomesSection) outcomesSection.style.display = "block";
+    if (divisors[0]) divisors[0].style.display = "block";
+    if (divisors[2]) divisors[2].style.display = "block";
+    
     document.getElementById("estatAproA").textContent = aproA.toFixed(1) + "%";
     document.getElementById("estatAproB").textContent = aproB.toFixed(1) + "%";
     
@@ -338,6 +370,11 @@ function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, p
     
     document.getElementById("estatPtosA").textContent = ptosA.toFixed(0);
     document.getElementById("estatPtosB").textContent = ptosB.toFixed(0);
+  } else {
+    if (statsSection) statsSection.style.display = "none";
+    if (outcomesSection) outcomesSection.style.display = "none";
+    if (divisors[0]) divisors[0].style.display = "none";
+    if (divisors[2]) divisors[2].style.display = "none";
   }
 
   rodapeImagem.innerText = descricaoImagem.value;
@@ -346,7 +383,7 @@ function atualizarResultados(nomeA, nomeB, forceA, forceB, probVitA, probVitB, p
 /* ===== DOWNLOAD ===== */
 btn_download.onclick = () => {
   html2canvas(areaResultado, {
-    backgroundColor: "#ffffff",
+    backgroundColor: "#1e293b",
     scale: 2
   }).then(canvas => {
     const link = document.createElement("a");

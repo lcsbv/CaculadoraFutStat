@@ -217,7 +217,7 @@
           <canvas id="radar" aria-label="Gráfico radar comparando os dois times"></canvas>
         </div>
 
-        <hr class="divisor">
+        <hr class="divisor" id="divOutcomes">
 
         <!-- Possíveis Resultados -->
         <div class="possible-outcomes-section">
@@ -235,6 +235,14 @@
               <div class="outcome-score">-</div>
               <div class="outcome-prob">-</div>
             </div>
+            <div class="outcome-item outcome-4">
+              <div class="outcome-score">-</div>
+              <div class="outcome-prob">-</div>
+            </div>
+            <div class="outcome-item outcome-5">
+              <div class="outcome-score">-</div>
+              <div class="outcome-prob">-</div>
+            </div>
           </div>
         </div>
 
@@ -242,7 +250,7 @@
 
         <!-- Probabilidades -->
         <div class="probabilities-section">
-          <h3 class="prob-title">Probabilidade de Resultado</h3>
+          <h3 class="prob-title" id="probTitle">Probabilidade de Resultado</h3>
           <div class="prob-grid">
             <div class="prob-item prob-item-a">
               <div class="prob-label" id="probLabelA">Vitória Time A</div>
@@ -252,7 +260,7 @@
               </div>
             </div>
             <div class="prob-item prob-item-draw">
-              <div class="prob-label">Empate</div>
+              <div class="prob-label" id="probLabelDraw">Empate</div>
               <div class="prob-percentage" id="probValueDraw">-</div>
               <div class="prob-bar-bg">
                 <div class="prob-bar-fill" id="probBarDraw" style="width: 0%; background: #8b5cf6;"></div>
